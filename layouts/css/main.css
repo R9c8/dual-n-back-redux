@@ -1,0 +1,62 @@
+body {
+    padding: 5px 15px 15px 15px;
+}
+
+.logo {
+    margin: 0 auto;
+    width: 300px;
+}
+
+.logo-img {
+    height: 80px;
+}
+
+.content-container {
+    margin: 0 auto;
+    width: 970px;
+}
+
+.main-content {
+    width: 970px;
+    height: 700px;
+    background-color: #303030;
+    border-radius: 15px;
+    display: flex;
+}
+
+.left-sidebar {
+    width: 260px;
+    height: 700px;
+    background-color: #363636;
+    border-radius: 15px 0 0 15px;
+    padding: 15px 25px;
+}
+
+.right-sidebar {
+    width: 260px;
+    height: 700px;
+    background-color: #363636;
+    border-radius: 0 15px 15px 0;
+    padding: 15px 25px;
+}
+
+.game-content {
+    width: 450px;
+    height: 700px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.footer {
+    width: 200px;
+    margin: 5px auto;
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 0.8em;
+}
+
+.footer-link {
+    display: inline;
+}
