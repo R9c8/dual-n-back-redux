@@ -15,14 +15,57 @@
         <div class="main-content">
           <div class="left-sidebar">
             <h3>Next Set</h3>
-            <p>Level: <span class="bold">2</span></p>
-            <p>Number of trials: <span class="bold">24</span></p>
-            <p>Trial Time: <span class="bold">3 s.</span></p>
-            <p>Set duration: <span class="bold">1 m. 12 s.</span></p>
+            <div>Level: <span class="bold">2</span></div>
+            <div>Number of trials: <span class="bold">24</span></div>
+            <div>Trial Time: <span class="bold">3 s.</span></div>
+            <div>Set duration: <span class="bold">1 m. 12 s.</span></div>
+            <hr class="my-3">
+            <h3>Today's Sets</h3>
           </div>
           <div class="game-content"></div>
           <div class="right-sidebar">
             <h3>Settings</h3>
+            <h4 style="color: #00bc8c;">Trial time</h4>
+            <div class="form-group">
+              <div class="custom-control custom-radio">
+                <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input" checked="">
+                <label class="custom-control-label" for="customRadio1">Static</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
+                <label class="custom-control-label" for="customRadio2">Dynamic</label>
+              </div>
+            </div>
+            <div class="settings-prop">Time initial (ms):</div>
+            <input class="form-control form-control-sm" type="text" value="3000" id="inputSmall" style="width: 52px; display: inline-block;">
+            <div class="settings-prop">Time increment (ms):</div>
+            <input class="form-control form-control-sm" type="text" value="100" id="inputSmall" style="width: 52px; display: inline-block;">
+            <hr class="my-2">
+            <h4 style="color: #00bc8c;">Number of trials</h4>
+            <div class="settings-prop">number - factor - exponent:</div><br>
+            <input class="form-control form-control-sm" type="text" value="20" id="inputSmall" style="width: 52px; display: inline-block;"> - 
+            <input class="form-control form-control-sm" type="text" value="1" id="inputSmall" style="width: 52px; display: inline-block;"> - 
+            <input class="form-control form-control-sm" type="text" value="2" id="inputSmall" style="width: 52px; display: inline-block;">
+            <hr class="my-2">
+            <h4 style="color: #00bc8c;">Thresholds</h4>
+            <div class="settings-prop">Threshold advance:</div>
+            <input class="form-control form-control-sm" type="text" value="80" id="inputSmall" style="width: 35px; display: inline-block;">
+            <div class="settings-prop">Threshold fallback:</div>
+            <input class="form-control form-control-sm" type="text" value="50" id="inputSmall" style="width: 35px; display: inline-block;">
+            <div class="settings-prop">Fallback count:</div>
+            <input class="form-control form-control-sm" type="text" value="3" id="inputSmall" style="width: 35px; display: inline-block;">
+            <hr class="my-2">
+            <h4 style="color: #00bc8c;">Feedback</h4>
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="customCheck1" checked="">
+              <label class="custom-control-label" for="customCheck1">Show feedback on error</label>
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="customCheck2" checked="">
+              <label class="custom-control-label" for="customCheck2">Show feedback on key press</label>
+            </div>
+            <hr class="my-2">
+            <h4 style="color: #00bc8c;">Sound volume: 100%</h4>
           </div>
         </div>
       </main>
