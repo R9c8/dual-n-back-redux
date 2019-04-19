@@ -1,1 +1,7 @@
 src/serviceWorker.js
+node_modules
+build
+.git
+.vscode
+.docz/cache
+.docz/dist
