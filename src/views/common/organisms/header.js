@@ -4,18 +4,18 @@ import styled from "styled-components";
 export const Header = () => (
   <HeaderBox>
     <LogoBox>
-      <LogoImg src="/logo.png"></LogoImg>
+      <LogoImg src="/logo.png" />
     </LogoBox>
   </HeaderBox>
 );
 
-const HeaderBox = styled.header`
-`;
+const HeaderBox = styled.header``;
 
 const LogoBox = styled.div`
   {
-      margin: 0 auto;
-      width: 300px;
+    margin: 5px auto 0;
+    width: 300px;
+    height: 80px;
   }
 `;
 

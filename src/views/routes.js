@@ -2,10 +2,9 @@ import React from "react";
 import { renderRoutes } from "react-router-config";
 
 import { GamePage } from "./game/pages/game-page";
-//import { AboutPage } from "./game";
-//import { TermsPage } from "./game";
-//import { NotFoundPage } from "./common";
-
+// import { AboutPage } from "./game";
+// import { TermsPage } from "./game";
+// import { NotFoundPage } from "./common";
 
 const routes = [
   {

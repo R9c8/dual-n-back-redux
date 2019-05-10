@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyles = createGlobalStyle`
   html {
@@ -18,21 +18,33 @@ export const GlobalStyles = createGlobalStyle`
     text-align: left;
     background-color: #222;
     -webkit-font-smoothing: antialiased;
-    padding: 5px 15px 15px 15px;    
   }
 
   #root {
     display: flex;
+    // padding: 5px 0px 15px 0px;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     min-width: 1010px;
   }
 
+  hr {
+    -webkit-box-sizing: content-box;
+            box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
   a {
-  color: #00bc8c;
-  text-decoration: none;
-  background-color: transparent;
+    color: #00bc8c;
+    text-decoration: none;
+    background-color: transparent;
   }
 
   a:hover {
@@ -53,4 +65,4 @@ export const GlobalStyles = createGlobalStyle`
   a:not([href]):not([tabindex]):focus {
     outline: 0;
   }
-`
+`;
