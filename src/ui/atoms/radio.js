@@ -44,8 +44,7 @@ const Icon = styled.svg`
   stroke: white;
   stroke-width: 3px;
 `;
-// Hide checkbox visually but remain accessible to screen readers.
-// Source: https://polished.js.org/docs/#hidevisually
+
 const HiddenRadio = styled.input.attrs({ type: "radio" })`
   border: 0;
   border-color: transparent;
