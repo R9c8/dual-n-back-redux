@@ -49,6 +49,7 @@ const Icon = styled.svg`
 // Source: https://polished.js.org/docs/#hidevisually
 const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
   border: 0;
+  border-color: transparent;
   clip: rect(0 0 0 0);
   clippath: inset(50%);
   height: 1px;
@@ -58,6 +59,10 @@ const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
   position: absolute;
   white-space: nowrap;
   width: 1px;
+  -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 `;
 
 const StyledCheckbox = styled.div`
