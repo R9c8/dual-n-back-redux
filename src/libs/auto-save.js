@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from "react";
+import styled from "styled-components";
 import { FormSpy } from "react-final-form";
 import diff from "object-diff";
 
@@ -38,10 +39,14 @@ class AutoSave extends React.Component {
     // This component doesn't have to render anything, but it can render
     // submitting state.
     return (
-      this.state.submitting && <div className="submitting">Submitting...</div>
+      this.state.submitting && <Submitting opacity={this.props.opacity}>Submitting...</Submitting>
     );
   }
 }
+
+const Submitting = styled.div`
+  ${(p) => p.opacity && `opacity: ${p.opacity};`}
+`;
 
 // Make a HOC
 // This is not the only way to accomplish auto-save, but it does let us:

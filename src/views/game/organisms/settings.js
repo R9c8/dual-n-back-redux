@@ -94,12 +94,12 @@ export const Settings = () => (
         <H4>Feedback</H4>
         <Field name="feedbackOnError" type="checkbox">
           {({ input, meta }) => (
-            <CheckBox {...input} type="checkbox" label="Show feedback on error" />
+            <CheckBox {...input} label="Show feedback on error" />
           )}
         </Field>
         <Field name="feedbackOnKeyPress" type="checkbox">
           {({ input, meta }) => (
-            <CheckBox {...input} type="checkbox" label="Show feedback on key press" />
+            <CheckBox {...input} label="Show feedback on key press" />
           )}
         </Field>
         <Hr2 />
@@ -108,7 +108,7 @@ export const Settings = () => (
             <Volume {...input} defaultValue={60} />
           )}
         </Field>
-        <AutoSave debounce={1000} save={save} />
+        <AutoSave debounce={1000} save={save} opacity={0.5} />
       </form>
     )}
   />
