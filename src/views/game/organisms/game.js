@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 import { GameMode } from '../molecules/game-mode';
 import { GameButtons } from '../molecules/game-buttons';
+import { GameSquare } from '../molecules/game-square';
 
 export const Game = () => (
   <GameBox>
     <GameMode />
+    <GameSquare />
     <GameButtons />
   </GameBox>
 );
