@@ -1,15 +1,13 @@
-import 'rc-slider/assets/index.css';
-
 import React from "react";
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
-import { Form, Field } from 'react-final-form';
-
-import Slider, { createSliderWithTooltip } from 'rc-slider';
+import { Form, Field } from "react-final-form";
 
 import {
   H3, H4, Hr2, Input, CheckBox,
-} from '../../../ui';
+} from "../../../ui";
+
+import { Volume } from "../molecules/volume";
 
 const onSubmit = (e) => { console.log(e); };
 
@@ -54,35 +52,11 @@ export const Settings = () => (
         <CheckBox label="Show feedback on error" />
         <CheckBox label="Show feedback on key press" />
         <Hr2 />
-        <H4>Sound volume: 100%</H4>
-        <Slider
-          defaultValue={60}
-          trackStyle={{ backgroundColor: '#00bc8c', height: 3 }}
-          handleStyle={{
-            borderColor: '#00bc8c',
-            height: 16,
-            width: 16,
-            marginLeft: -6,
-            marginTop: -6,
-            backgroundColor: 'white',
-          }}
-          railStyle={{ backgroundColor: '#222', height: 3 }}
-        />
+        <Volume defaultValue={60} />
       </form>
     )}
   />
 );
-
-const styles = {
-  root: {
-    width: 300,
-  },
-  slider: {
-    padding: '22px 0px',
-    trackColor: 'yellow',
-    selectionColor: 'green',
-  },
-};
 
 const FormGroup = styled.div`
   margin-bottom: 1rem;
