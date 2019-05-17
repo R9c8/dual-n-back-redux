@@ -40,7 +40,7 @@ Input.propTypes = {
   onBlur: PropTypes.func,
   onChange: PropTypes.func,
   type: PropTypes.string,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
 };
 
 Input.defaultProps = {
@@ -52,6 +52,7 @@ Input.defaultProps = {
   onBlur: undefined,
   onChange: undefined,
   type: "text",
+  value: undefined,
 };
 
 const InputNative = styled.input`

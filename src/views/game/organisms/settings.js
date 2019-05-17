@@ -2,6 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import { Form, Field } from "react-final-form";
+import AutoSave from "../../../libs/auto-save";
 
 import {
   H3, H4, Hr2, Input, CheckBox,
@@ -9,11 +10,29 @@ import {
 
 import { Volume } from "../molecules/volume";
 
-const onSubmit = (e) => { console.log(e); };
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const save = async (values) => {
+  console.log('Saving', values);
+  await sleep(2000);
+};
 
 export const Settings = () => (
   <Form
-    onSubmit={onSubmit}
+    onSubmit={save}
+    initialValues={
+      {
+        trialsNumber: '20',
+        trialsFactor: '1',
+        trialsExponent: '2',
+        thresholdAdvance: '80',
+        thresholdFallback: '50',
+        thresholdFallbackCount: '3',
+        volume: 60,
+        feedbackOnError: true,
+        feedbackOnKeyPress: true,
+      }
+    }
     render={({ handleSubmit, pristine, invalid }) => (
       <form onSubmit={handleSubmit}>
         <H3>Settings</H3>
@@ -23,36 +42,73 @@ export const Settings = () => (
         <H4>Number of trials</H4>
         <div>number - factor - exponent:</div>
         <InputBox width="52px">
-          <Input value="20" />
+          <Field name="trialsNumber">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         &nbsp;-&nbsp;
         <InputBox width="52px">
-          <Input value="1" />
+          <Field name="trialsFactor">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         &nbsp;-&nbsp;
         <InputBox width="52px">
-          <Input value="2" />
+          <Field name="trialsExponent">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         <Hr2 />
         <H4>Thresholds</H4>
         <span>Threshold advance:&nbsp;</span>
         <InputBox width="35px">
-          <Input value="80" />
+          <Field name="thresholdAdvance">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         <span>Threshold fallback:&nbsp;</span>
         <InputBox width="35px">
-          <Input value="50" />
+          <Field name="thresholdFallback">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         <span>Fallback count:&nbsp;</span>
         <InputBox width="35px">
-          <Input value="3" />
+          <Field name="thresholdFallbackCount">
+            {({ input, meta }) => (
+              <Input {...input} type="text" />
+            )}
+          </Field>
         </InputBox>
         <Hr2 />
         <H4>Feedback</H4>
-        <CheckBox label="Show feedback on error" />
-        <CheckBox label="Show feedback on key press" />
+        <Field name="feedbackOnError" type="checkbox">
+          {({ input, meta }) => (
+            <CheckBox {...input} type="checkbox" label="Show feedback on error" />
+          )}
+        </Field>
+        <Field name="feedbackOnKeyPress" type="checkbox">
+          {({ input, meta }) => (
+            <CheckBox {...input} type="checkbox" label="Show feedback on key press" />
+          )}
+        </Field>
         <Hr2 />
-        <Volume defaultValue={60} />
+        <Field name="volume">
+          {({ input, meta }) => (
+            <Volume {...input} defaultValue={60} />
+          )}
+        </Field>
+        <AutoSave debounce={1000} save={save} />
       </form>
     )}
   />

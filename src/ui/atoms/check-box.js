@@ -2,44 +2,35 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-export const CheckBox = ({ defaultChecked, label, onChange }) => {
-  const [checked, setChecked] = useState(defaultChecked);
-  return (
-    <label style={{ display: 'block' }}>
-      <CheckboxContainer>
-        <HiddenCheckbox
-          checked={checked}
-          onChange={(e) => {
-            console.log(e);
-            if (checked) {
-              setChecked(false);
-            } else {
-              setChecked(true);
-            }
-            if (onChange) {
-              onChange(e);
-            }
-          }}
-        />
-        <StyledCheckbox checked={checked}>
-          <Icon viewBox="0 0 24 24">
-            <polyline points="20 6 9 17 4 12" />
-          </Icon>
-        </StyledCheckbox>
-      </CheckboxContainer>
-      <Label>{label}</Label>
-    </label>
-  );
-};
+export const CheckBox = ({
+  checked,
+  label,
+  onChange,
+}) => (
+  <label style={{ display: 'block' }}>
+    <CheckboxContainer>
+      <HiddenCheckbox
+        checked={checked}
+        onChange={onChange}
+      />
+      <StyledCheckbox checked={checked}>
+        <Icon viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12" />
+        </Icon>
+      </StyledCheckbox>
+    </CheckboxContainer>
+    <Label>{label}</Label>
+  </label>
+);
 
 CheckBox.propTypes = {
-  defaultChecked: PropTypes.bool,
+  checked: PropTypes.bool,
   label: PropTypes.string,
   onChange: PropTypes.func,
 };
 
 CheckBox.defaultProps = {
-  defaultChecked: true,
+  checked: true,
   label: undefined,
   onChange: undefined,
 };
