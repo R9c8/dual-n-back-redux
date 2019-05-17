@@ -6,3 +6,4 @@ export {
 } from "./h";
 export { Input } from "./input";
 export { CheckBox } from "./check-box";
+export { Radio } from "./radio";

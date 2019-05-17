@@ -5,7 +5,7 @@ import { Form, Field } from "react-final-form";
 import AutoSave from "../../../libs/auto-save";
 
 import {
-  H3, H4, Hr2, Input, CheckBox,
+  H3, H4, Hr2, Input, CheckBox, Radio,
 } from "../../../ui";
 
 import { Volume } from "../molecules/volume";
@@ -22,6 +22,7 @@ export const Settings = () => (
     onSubmit={save}
     initialValues={
       {
+        trialTimeMode: "static",
         trialsNumber: '20',
         trialsFactor: '1',
         trialsExponent: '2',
@@ -38,6 +39,17 @@ export const Settings = () => (
         <H3>Settings</H3>
         <FormGroup />
         <H4>Trial time</H4>
+        <Field name="trialTimeMode" type="radio" value="static">
+          {({ input, meta }) => (
+            <Radio {...input} label="static" />
+          )}
+        </Field>
+        &nbsp;&nbsp;&nbsp;
+        <Field name="trialTimeMode" type="radio" value="dynamic">
+          {({ input, meta }) => (
+            <Radio {...input} label="dynamic" />
+          )}
+        </Field>
         <Hr2 />
         <H4>Number of trials</H4>
         <div>number - factor - exponent:</div>
