@@ -88,6 +88,7 @@ const StyledCheckbox = styled.div`
 
 const Label = styled.span`
   margin-left: 8px;
+  vertical-align: middle;
   &:hover {
     cursor: pointer;
   }
