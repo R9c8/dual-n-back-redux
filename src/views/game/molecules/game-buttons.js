@@ -61,15 +61,17 @@ const GameButtonBox = styled.button`
     cursor: pointer;
   }
 
-  &:focus {
+
+  &:active {
+    background-color: transparent;
     -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 188, 140, 0.5);
             box-shadow: 0 0 0 0.2rem rgba(0, 188, 140, 0.5);
   }
 
-//.btn:focus, .btn:active {
-//  outline: none !important;
-//  box-shadow: none !important;
-//}
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 
   margin-bottom: 10px;
   border-radius: 20px;
