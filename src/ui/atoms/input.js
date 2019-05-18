@@ -15,6 +15,8 @@ export const Input = ({
   onChange,
   type,
   value,
+  min,
+  max,
 }) => (
   <>
     {label && <InputLabel>{label}</InputLabel>}
@@ -27,6 +29,8 @@ export const Input = ({
       onChange={onChange}
       type={type}
       value={value}
+      min={min}
+      max={max}
     />
   </>
 );
@@ -41,6 +45,8 @@ Input.propTypes = {
   onChange: PropTypes.func,
   type: PropTypes.string,
   value: PropTypes.string,
+  min: PropTypes.string,
+  max: PropTypes.string,
 };
 
 Input.defaultProps = {
@@ -53,6 +59,8 @@ Input.defaultProps = {
   onChange: undefined,
   type: "text",
   value: undefined,
+  min: undefined,
+  max: undefined,
 };
 
 const InputNative = styled.input`
@@ -71,7 +79,6 @@ const InputNative = styled.input`
 
   position: relative;
   box-sizing: border-box;
-  display: block;
   width: 100%;
   height: calc(1.5em + 0.5rem + 2px);
   padding: 0.25rem 0.5rem;
