@@ -17,6 +17,7 @@ export const Input = ({
   value,
   min,
   max,
+  step,
 }) => (
   <>
     {label && <InputLabel>{label}</InputLabel>}
@@ -31,6 +32,7 @@ export const Input = ({
       value={value}
       min={min}
       max={max}
+      step={step}
     />
   </>
 );
@@ -47,6 +49,7 @@ Input.propTypes = {
   value: PropTypes.string,
   min: PropTypes.string,
   max: PropTypes.string,
+  step: PropTypes.string,
 };
 
 Input.defaultProps = {
@@ -61,6 +64,7 @@ Input.defaultProps = {
   value: undefined,
   min: undefined,
   max: undefined,
+  step: undefined,
 };
 
 const InputNative = styled.input`

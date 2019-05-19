@@ -1,14 +1,23 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
-export const StartButton = () => (
+export const StartButton = ({ onClick }) => (
   <StartButtonBox>
-    <StartButtonElement>
+    <StartButtonElement onClick={onClick}>
       <CaptureFirst>Press the Spacebar to start training</CaptureFirst>
       <CaptureSecond>or click this message</CaptureSecond>
     </StartButtonElement>
   </StartButtonBox>
 );
+
+StartButton.propTypes = {
+  onClick: PropTypes.func,
+};
+
+StartButton.defaultProps = {
+  onClick: undefined,
+};
 
 const StartButtonElement = styled.div`
   display: flex;
@@ -26,7 +35,9 @@ const StartButtonElement = styled.div`
     cursor: pointer;
     opacity: 1;
     background-color: #00bc8c;
-    transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out, border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out, -webkit-box-shadow 0.05s ease-in-out;
+    transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out,
+      border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out,
+      -webkit-box-shadow 0.05s ease-in-out;
   }
 `;
 

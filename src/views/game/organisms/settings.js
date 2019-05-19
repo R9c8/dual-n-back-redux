@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
 
+import { useStore } from 'effector-react';
+
 import { Icon } from "antd";
 
 import { Form, Field } from "react-final-form";
 import { OnChange } from "react-final-form-listeners";
-import AutoSave from "../../../libs/auto-save";
+
+import { $settings, saveSettings } from '../../../core/game/index';
+
+import AutoSave from "../../../lib/auto-save";
 
 import {
   H3, H4, Hr2, Input, CheckBox, Radio,
@@ -17,31 +22,17 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const save = async (values) => {
   console.log('Saving', values);
+  saveSettings(values);
   await sleep(2000);
 };
 
 export const Settings = () => {
   const [trialTimeMode, setTrialTimeMode] = useState("static");
+  const settingsInitialValues = useStore($settings);
   return (
     <Form
       onSubmit={save}
-      initialValues={
-        {
-          trialTimeMode: "static",
-          trialTimeMs: "3000",
-          timeInitialMs: "3000",
-          timeIncrementMs: "100",
-          trialsNumber: "20",
-          trialsFactor: "1",
-          trialsExponent: "2",
-          thresholdAdvance: "80",
-          thresholdFallback: "50",
-          thresholdFallbackCount: "3",
-          volume: 60,
-          feedbackOnError: true,
-          feedbackOnKeyPress: true,
-        }
-      }
+      initialValues={settingsInitialValues}
       render={({ handleSubmit, pristine, invalid }) => (
         <form onSubmit={handleSubmit}>
           <H3>Settings</H3>
@@ -69,7 +60,7 @@ export const Settings = () => {
             <InputBox width="72px">
               <Field name="trialTimeMs">
                 {({ input, meta }) => (
-                  <Input {...input} type="number" />
+                  <Input {...input} type="number" step="100" />
                 )}
               </Field>
             </InputBox>
