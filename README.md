@@ -18,8 +18,8 @@ Quick Start
 -----------
 
 ```shell
-$ git clone https://github.com/R9c8/dual-n-back-redux.git
-$ cd dual-n-back-redux
+$ git clone https://github.com/R9c8/n-back-training.git
+$ cd n-back-training
 $ npm install
 $ npm start
 ```
