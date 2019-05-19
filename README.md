@@ -1,7 +1,7 @@
-# Dual N-Back Redux
-Dual N-Back game with React • Redux • Redux-Thunk https://dual-n-back-redux.herokuapp.com
+# N-Back Training
+Classic N-Back game with React • Effector https://n-back.herokuapp.com
 
-A classic Dual N-Back game built with React, Redux, and Redux Thunk. Try the [live demo](https://dual-n-back-redux.herokuapp.com).
+A classic Dual N-Back game built with React, React Hooks, and Effector. Try the [live demo](https://n-back.herokuapp.com).
 
 ![screenshot](https://habrastorage.org/webt/ve/17/bf/ve17bfzycco7crulazxluqyc0ni.jpeg)
 
@@ -10,8 +10,7 @@ Stack
 -----
 
 - React (Create-React-App)
-- React-Redux
-- Redux-Thunk
+- [Effector](https://github.com/zerobias/effector)
 - Heroku
 
 
@@ -19,8 +18,8 @@ Quick Start
 -----------
 
 ```shell
-$ git clone https://github.com/R9c8/dual-n-back-redux.git
-$ cd dual-n-back-redux
+$ git clone https://github.com/R9c8/n-back-training.git
+$ cd n-back-training
 $ npm install
 $ npm start
 ```
