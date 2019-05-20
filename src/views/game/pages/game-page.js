@@ -14,7 +14,10 @@ import { Game } from "../organisms/game";
 export const GamePage = () => {
   const isGameStarted = useStore($isGameStarted);
   return (
-    <Main header={<Header />} footer={<Footer />}>
+    <Main
+      header={<Header isGameStarted={isGameStarted} />}
+      footer={<Footer isGameStarted={isGameStarted} />}
+    >
       {!isGameStarted && <LeftSidebar />}
       <Game
         isGameStarted={isGameStarted}
