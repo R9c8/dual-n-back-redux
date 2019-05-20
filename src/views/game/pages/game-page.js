@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useStore } from 'effector-react';
-import { $isGameStarted } from '../../../core/game/index';
+import { useStore } from "effector-react";
+import { $isGameStarted, startGame, abortGame } from "../../../core/game";
 
 import { Main } from "../../common/templates/main";
 import { Header } from "../../common/organisms/header";
@@ -16,7 +16,11 @@ export const GamePage = () => {
   return (
     <Main header={<Header />} footer={<Footer />}>
       {!isGameStarted && <LeftSidebar />}
-      <Game />
+      <Game
+        isGameStarted={isGameStarted}
+        startGame={startGame}
+        abortGame={abortGame}
+      />
       {!isGameStarted && <RightSidebar />}
     </Main>
   );
