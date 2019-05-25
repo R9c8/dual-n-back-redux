@@ -1,5 +1,5 @@
 # N-Back Training
-Classic N-Back game with React • Effector https://n-back.herokuapp.com
+N-Back game with React • Effector https://n-back.herokuapp.com
 
 A classic Dual N-Back game built with React, React Hooks, and Effector. Try the [live demo](https://n-back.herokuapp.com).
 
