@@ -11,6 +11,9 @@ Stack
 
 - React (Create-React-App)
 - [Effector](https://github.com/zerobias/effector)
+- [Styled Components](https://github.com/styled-components/styled-components)
+- [React Router](https://github.com/ReactTraining/react-router)
+- [React Final Form](https://github.com/final-form/react-final-form)
 - Heroku
 
 
