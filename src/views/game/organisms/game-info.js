@@ -1,13 +1,27 @@
 import React from "react";
+import { useStore } from "effector-react";
+
+import { $nextSetWidget } from "../../../core/game";
 
 import { NextSet } from "../molecules/next-set";
 import { TodaysSets } from '../molecules/todays-sets';
 import { TodaysStatistics } from '../molecules/todays-statistics';
 
-export const GameInfo = () => (
-  <>
-    <NextSet />
-    <TodaysSets />
-    <TodaysStatistics />
-  </>
-);
+export const GameInfo = () => {
+  const nextSetWidget = useStore($nextSetWidget);
+  return (
+    <>
+      {nextSetWidget && (
+        <NextSet
+          level={nextSetWidget.level}
+          numberOfTrials={nextSetWidget.numberOfTrials}
+          trialTime={nextSetWidget.trialTime}
+          trialTimeIncrement={nextSetWidget.trialTimeIncrement}
+          duration={nextSetWidget.duration}
+        />
+      )}
+      <TodaysSets />
+      <TodaysStatistics />
+    </>
+  );
+};

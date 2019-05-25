@@ -11,7 +11,6 @@ export const abortGame = createEvent();
 
 export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
-  .on(stopGame, () => false)
   .on(abortGame, () => false);
 
 export const saveSettings = createEvent();
@@ -99,7 +98,27 @@ const initNextSetWidget = async ({ settings, gameMode }) => {
   };
 };
 
-const $globalSettings = createStoreObject({ settings: $settings, gameMode: $gameMode });
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+function UserException(message) {
+  this.message = message;
+  this.name = "Исключение, определенное пользователем";
+}
+
+const gamePromise = new Promise((resolve, reject) => {
+  abortGame.watch(reject);
+});
+
+const gameEffect = createEffect('initNextSetWidget').use(
+//  async () => {
+//    abortGame.watch(stopGame);
+//    abortGame.watch(() => { throw new UserException("Неверно указан номер месяца"); });
+//  },
+  () => gamePromise,
+);
+
+const $globalSettings = createStoreObject({ settings: $settings, gameMode: $gameMode })
+  .on(startGame, (p) => { gameEffect(); });
 
 const setNextSetWidgetEffect = createEffect('initNextSetWidget').use(initNextSetWidget);
 
@@ -109,3 +128,5 @@ export const $nextSetWidget = createStore(null)
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
 
 $nextSetWidget.watch(console.log);
+
+gameEffect();

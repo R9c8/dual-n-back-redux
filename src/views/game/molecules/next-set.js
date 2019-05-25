@@ -1,26 +1,49 @@
 import React from "react";
+import PropTypes from "prop-types";
+
+import { formatTimeFromMs } from "../../../lib/time";
 
 import { Hr3, H3 } from "../../../ui";
 
-export const NextSet = () => (
+export const NextSet = ({
+  level,
+  numberOfTrials,
+  trialTime,
+  trialTimeIncrement,
+  duration,
+}) => (
   <>
     <H3>Next Set</H3>
-    <span style={{ display: "block" }}>
+    <div>
       Level:&nbsp;
-      <strong>2</strong>
-    </span>
-    <span style={{ display: "block" }}>
+      <strong>{level}</strong>
+    </div>
+    <div>
       Number of trials:&nbsp;
-      <strong>24</strong>
-    </span>
-    <span style={{ display: "block" }}>
+      <strong>{numberOfTrials}</strong>
+    </div>
+    <div>
       Trial Time:&nbsp;
-      <strong>3 s.</strong>
-    </span>
-    <span style={{ display: "block" }}>
+      <strong>{formatTimeFromMs(trialTime)}</strong>
+    </div>
+    {trialTimeIncrement !== 0 && (
+      <div>
+        Trial Time Increment:&nbsp;
+        <strong>{formatTimeFromMs(trialTimeIncrement)}</strong>
+      </div>
+    )}
+    <div>
       Set duration:&nbsp;
-      <strong>1 m. 12 s.</strong>
-    </span>
+      <strong>{formatTimeFromMs(duration)}</strong>
+    </div>
     <Hr3 />
   </>
 );
+
+NextSet.propTypes = {
+  level: PropTypes.number.isRequired,
+  numberOfTrials: PropTypes.number.isRequired,
+  trialTime: PropTypes.number.isRequired,
+  trialTimeIncrement: PropTypes.number.isRequired,
+  duration: PropTypes.number.isRequired,
+};
