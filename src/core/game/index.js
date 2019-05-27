@@ -5,128 +5,51 @@ import {
   createEffect,
 } from "effector";
 
+import {
+  setNextSetWidget,
+  initSettings,
+  initMode,
+} from "./access";
+
 export const startGame = createEvent();
 export const stopGame = createEvent();
 export const abortGame = createEvent();
 
-export const $isGameStarted = createStore(false)
-  .on(startGame, () => true)
-  .on(abortGame, () => false);
-
 export const saveSettings = createEvent();
-
-const initialSettings = {
-  trialTimeMode: "static",
-  trialTimeMs: "3000",
-  timeInitialMs: "3000",
-  timeIncrementMs: "100",
-  trialsNumber: "20",
-  trialsFactor: "1",
-  trialsExponent: "2",
-  thresholdAdvance: "80",
-  thresholdFallback: "50",
-  thresholdFallbackCount: "3",
-  volume: 60,
-  feedbackOnError: true,
-  feedbackOnKeyPress: true,
-};
-
-export const $settings = createStore(initialSettings)
-  .on(saveSettings, (settings, newSettings) => ({ ...settings, ...newSettings }));
 
 export const setModeMatch = createEvent();
 export const setModeLevel = createEvent();
-
-const initialMode = {
-  level: 2,
-  match: {
-    position: true,
-    audio: true,
-    number: false,
-    color: false,
-    shape: false,
-  },
-};
-
-export const $gameMode = createStore(initialMode)
-  .on(setModeMatch, (mode, match) => ({ ...mode, match }))
-  .on(setModeLevel, (mode, level) => ({ ...mode, level }));
-
-const calcDuration = (
-  trialTimeMode,
-  trialTimeMs,
-  timeInitialMs,
-  timeIncrementMs,
-  numberOfTrials,
-) => {
-  let duration = 0;
-  if (trialTimeMode === "static") {
-    duration = numberOfTrials * trialTimeMs;
-  } else if (trialTimeMode === "dynamic") {
-    for (let i = 0; i < numberOfTrials; i += 1) {
-      duration += timeInitialMs + timeIncrementMs * i;
-    }
-  }
-  return duration;
-};
-
-const initNextSetWidget = async ({ settings, gameMode }) => {
-  const numberOfTrials = Number(settings.trialsNumber)
-    + ((gameMode.level * Number(settings.trialsFactor)) ** Number(settings.trialsExponent));
-
-  const { trialTimeMode } = settings;
-  const trialTimeMs = Number(settings.trialTimeMs);
-  const timeInitialMs = Number(settings.timeInitialMs);
-  const timeIncrementMs = Number(settings.timeIncrementMs);
-
-  const trialTime = (trialTimeMode === "static") ? trialTimeMs : timeInitialMs;
-  const trialTimeIncrement = (trialTimeMode === "static") ? 0 : timeIncrementMs;
-  const duration = calcDuration(
-    trialTimeMode,
-    trialTimeMs,
-    timeInitialMs,
-    timeIncrementMs,
-    numberOfTrials,
-  );
-
-  return {
-    level: gameMode.level,
-    numberOfTrials,
-    trialTime,
-    trialTimeIncrement,
-    duration,
-  };
-};
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-function UserException(message) {
-  this.message = message;
-  this.name = "Исключение, определенное пользователем";
-}
 
 const gamePromise = new Promise((resolve, reject) => {
   abortGame.watch(reject);
 });
 
-const gameEffect = createEffect('initNextSetWidget').use(
-//  async () => {
-//    abortGame.watch(stopGame);
-//    abortGame.watch(() => { throw new UserException("Неверно указан номер месяца"); });
-//  },
-  () => gamePromise,
+const gameEffect = createEffect('game').use(
+  () => gamePromise.catch(() => {}),
 );
+
+const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWidget);
+
+export const $isGameStarted = createStore(false)
+  .on(startGame, () => true)
+  .on(abortGame, () => false);
+
+export const $settings = createStore(initSettings())
+  .on(saveSettings, (settings, newSettings) => ({ ...settings, ...newSettings }));
+
+export const $gameMode = createStore(initMode())
+  .on(setModeMatch, (mode, match) => ({ ...mode, match }))
+  .on(setModeLevel, (mode, level) => ({ ...mode, level }));
 
 const $globalSettings = createStoreObject({ settings: $settings, gameMode: $gameMode })
   .on(startGame, (p) => { gameEffect(); });
 
-const setNextSetWidgetEffect = createEffect('initNextSetWidget').use(initNextSetWidget);
-
 export const $nextSetWidget = createStore(null)
   .on(setNextSetWidgetEffect.done, (state, { result }) => result);
+
+export const $todaysSetsWidget = createStore(null);
+export const $todaysStatisticsWidget = createStore(null);
 
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
 
 $nextSetWidget.watch(console.log);
-
-gameEffect();
