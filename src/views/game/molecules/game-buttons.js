@@ -2,15 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-export const GameButtons = () => (
-  <GameButtonsBox>
-    <GameButton keyLabel="A" label="Position Match" />
-    <GameButton keyLabel="L" label="Audio Match" />
-    <GameButton keyLabel="D" label="Number Match" />
-    <GameButton keyLabel="F" label="Color Match" />
-    <GameButton keyLabel="J" label="Shape Match" />
-  </GameButtonsBox>
-);
+import { useStore } from 'effector-react';
+import { $gameMode } from '../../../core/game';
+
+export const GameButtons = () => {
+  const gameMode = useStore($gameMode);
+  return (
+    <GameButtonsBox>
+      {gameMode.match.position && <GameButton keyLabel="A" label="Position Match" />}
+      {gameMode.match.audio && <GameButton keyLabel="L" label="Audio Match" />}
+      {gameMode.match.number && <GameButton keyLabel="D" label="Number Match" />}
+      {gameMode.match.color && <GameButton keyLabel="F" label="Color Match" />}
+      {gameMode.match.shape && <GameButton keyLabel="J" label="Shape Match" />}
+    </GameButtonsBox>
+  );
+};
 
 const GameButton = ({ keyLabel, label }) => (
   <GameButtonBox type="button">
@@ -55,14 +61,13 @@ const GameButtonBox = styled.button`
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 
   &:hover {
-    color: #fff;
-    background-color: #00bc8c;
-    border-color: #00bc8c;
     cursor: pointer;
   }
 
-
   &:active {
+    color: #fff;
+    background-color: #00bc8c;
+    // border-color: #00bc8c;
     background-color: transparent;
     -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 188, 140, 0.5);
             box-shadow: 0 0 0 0.2rem rgba(0, 188, 140, 0.5);
