@@ -11,6 +11,8 @@ import {
   initMode,
 } from "./access";
 
+// Tasks: add save all to localStorage
+
 export const startGame = createEvent();
 export const stopGame = createEvent();
 export const abortGame = createEvent();
