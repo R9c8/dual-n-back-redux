@@ -92,6 +92,7 @@ const GameModeBox = styled.div`
   {
     display: flex;
     justify-content: center;
+    height: 22px;
   }
 `;
 
