@@ -172,7 +172,7 @@ export const Settings = () => {
           <Hr2 />
           <Field name="volume">
             {({ input, meta }) => (
-              <Volume {...input} defaultValue={60} />
+              <Volume {...input} defaultValue={settingsInitialValues.volume} />
             )}
           </Field>
           <AutoSave debounce={500} save={save} opacity={0.5} />
