@@ -18,6 +18,7 @@ import {
 
 import { Volume } from "../molecules/volume";
 
+
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const save = async (values) => {
@@ -28,8 +29,8 @@ const save = async (values) => {
 
 export const Settings = () => {
   const [trialTimeMode, setTrialTimeMode] = useState("static");
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const settingsInitialValues = useStore($settings);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   return (
     <Form
       onSubmit={save}

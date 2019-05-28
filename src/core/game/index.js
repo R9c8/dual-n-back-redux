@@ -81,7 +81,6 @@ $globalSettings.watch(generateGameLine);
 $nextSetWidget.watch(console.log);
 
 resetSettingsAndMode.watch(() => {
-  console.log("resetSettingsAndMode");
   localStorage.removeItem("settings");
   localStorage.removeItem("mode");
   resetSettings();
