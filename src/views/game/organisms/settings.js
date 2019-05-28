@@ -175,14 +175,12 @@ export const Settings = () => {
               <Volume {...input} defaultValue={60} />
             )}
           </Field>
+          <AutoSave debounce={500} save={save} opacity={0.5} />
         </form>
       )}
     />
   );
 };
-
-// <AutoSave debounce={1000} save={save} opacity={0.5} />
-// deleted it because annoying
 
 const FormGroup = styled.div`
   margin-bottom: 1rem;

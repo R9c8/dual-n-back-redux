@@ -39,7 +39,7 @@ class AutoSave extends React.Component {
     // This component doesn't have to render anything, but it can render
     // submitting state.
     return (
-      this.state.submitting && <Submitting opacity={this.props.opacity}>Submitting...</Submitting>
+      this.state.submitting && <Submitting opacity={this.props.opacity}></Submitting>
     );
   }
 }
