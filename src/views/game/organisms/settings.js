@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import styled, { css } from "styled-components";
 
 import { useStore } from 'effector-react';
@@ -8,12 +8,12 @@ import { Icon } from "antd";
 import { Form, Field } from "react-final-form";
 import { OnChange } from "react-final-form-listeners";
 
-import { $settings, saveSettings } from '../../../core/game/index';
+import { $settings, setSettings, resetSettingsAndMode } from '../../../core/game/index';
 
 import AutoSave from "../../../lib/auto-save";
 
 import {
-  H3, H4, Hr2, Input, CheckBox, Radio,
+  H3, H4, Hr2, Input, CheckBox, Radio, SmallButton,
 } from "../../../ui";
 
 import { Volume } from "../molecules/volume";
@@ -22,20 +22,34 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const save = async (values) => {
   console.log('Saving', values);
-  saveSettings(values);
+  setSettings(values);
   await sleep(2000);
 };
 
 export const Settings = () => {
   const [trialTimeMode, setTrialTimeMode] = useState("static");
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const settingsInitialValues = useStore($settings);
   return (
     <Form
       onSubmit={save}
       initialValues={settingsInitialValues}
-      render={({ handleSubmit, pristine, invalid }) => (
-        <form onSubmit={handleSubmit}>
-          <H3>Settings</H3>
+      render={({
+        handleSubmit, pristine, invalid, initial,
+      }) => (
+        <form>
+          <H3>
+            Settings&nbsp;
+            <SmallButton
+              type="button"
+              onClick={() => {
+                resetSettingsAndMode();
+                forceUpdate();
+              }}
+            >
+              Reset
+            </SmallButton>
+          </H3>
           <H4>Trial time</H4>
           <FormGroup>
             <Field name="trialTimeMode" type="radio" value="static">
@@ -71,7 +85,7 @@ export const Settings = () => {
             <InputBox width="72px">
               <Field name="timeInitialMs">
                 {({ input, meta }) => (
-                  <Input {...input} type="number" />
+                  <Input {...input} type="number" step="100" />
                 )}
               </Field>
             </InputBox>
@@ -80,7 +94,7 @@ export const Settings = () => {
             <InputBox width="72px">
               <Field name="timeIncrementMs">
                 {({ input, meta }) => (
-                  <Input {...input} type="number" />
+                  <Input {...input} type="number" step="100" />
                 )}
               </Field>
             </InputBox>
