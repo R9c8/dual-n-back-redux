@@ -12,7 +12,7 @@ import {
   initMode,
   saveMode,
   generateGameLine,
-} from "./access";
+} from "./util";
 
 // Tasks: add save all to localStorage
 
