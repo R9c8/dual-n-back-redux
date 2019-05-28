@@ -39,8 +39,8 @@ export const GameMode = () => {
           &nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;
           N-Back:&nbsp;
           <select
-            defaultValue={gameMode.level}
             onChange={e => setModeLevel(Number(e.target.value))}
+            value={gameMode.level}
           >
             <option value="1">1</option>
             <option value="2">2</option>
