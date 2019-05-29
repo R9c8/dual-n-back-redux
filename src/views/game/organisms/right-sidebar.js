@@ -1,21 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import PropTypes from "prop-types";
+
+import { useStore } from "effector-react";
+import { $settings, $volume } from "../../../core/game/index";
 
 import { Settings } from "./settings";
+import { VolumeSet } from "./volume-set";
 
-export const RightSidebar = ({ isStarted }) => (
-  <RightSidebarBox>
-    <Settings />
-  </RightSidebarBox>
-);
-
-RightSidebar.propTypes = {
-  isStarted: PropTypes.bool,
-};
-
-RightSidebar.defaultProps = {
-  isStarted: true,
+export const RightSidebar = () => {
+  const settings = useStore($settings);
+  const volume = useStore($volume);
+  return (
+    <RightSidebarBox>
+      {settings && <Settings />}
+      {volume && <VolumeSet />}
+    </RightSidebarBox>
+  );
 };
 
 const RightSidebarBox = styled.aside`

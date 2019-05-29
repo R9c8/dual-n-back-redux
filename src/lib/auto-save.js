@@ -17,6 +17,12 @@ class AutoSave extends React.Component {
     this.timeout = setTimeout(this.save, this.props.debounce);
   }
 
+  //componentWillUnmount() {
+  //  if (this.timeout) {
+  //    clearTimeout(this.timeout);
+  //  }
+  //}
+
   save = async () => {
     if (this.promise) {
       await this.promise;

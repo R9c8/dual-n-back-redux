@@ -24,12 +24,12 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const save = async (values) => {
   console.log('Saving', values);
   setSettings(values);
-  await sleep(2000);
+  await sleep(500);
 };
 
 export const Settings = () => {
-  const [trialTimeMode, setTrialTimeMode] = useState("static");
   const settingsInitialValues = useStore($settings);
+  const [trialTimeMode, setTrialTimeMode] = useState(settingsInitialValues.trialTimeMode);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   return (
     <Form
@@ -44,8 +44,7 @@ export const Settings = () => {
             <SmallButton
               type="button"
               onClick={() => {
-                resetSettingsAndMode();
-                forceUpdate();
+                resetSettingsAndMode(forceUpdate);
               }}
             >
               Reset
@@ -171,12 +170,7 @@ export const Settings = () => {
             )}
           </Field>
           <Hr2 />
-          <Field name="volume">
-            {({ input, meta }) => (
-              <Volume {...input} defaultValue={settingsInitialValues.volume} />
-            )}
-          </Field>
-          <AutoSave debounce={500} save={save} opacity={0.5} />
+          <AutoSave debounce={100} save={save} opacity={0.5} />
         </form>
       )}
     />

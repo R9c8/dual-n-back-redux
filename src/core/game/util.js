@@ -13,7 +13,6 @@ const defaultSettings = {
   thresholdAdvance: "80",
   thresholdFallback: "50",
   thresholdFallbackCount: "3",
-  volume: 60,
   feedbackOnError: true,
   feedbackOnKeyPress: true,
 };
@@ -28,6 +27,8 @@ const defaultMode = {
     shape: false,
   },
 };
+
+const defaultVolume = 60;
 
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -59,6 +60,21 @@ export const initMode = () => {
 
 export const saveMode = async (mode) => {
   localStorage.setItem('mode', JSON.stringify(mode));
+};
+
+export const initVolume = () => {
+  const data = localStorage.getItem('volume');
+  let initialVolume;
+  if (data) {
+    initialVolume = Number(data);
+  } else {
+    initialVolume = defaultVolume;
+  }
+  return initialVolume;
+};
+
+export const saveVolume = async (volume) => {
+  localStorage.setItem('volume', volume.toString());
 };
 
 // for setNextSetWidget

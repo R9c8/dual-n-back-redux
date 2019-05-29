@@ -6,19 +6,23 @@ import {
 } from "effector";
 
 import {
+  sleep,
   setNextSetWidget,
   initSettings,
   saveSettings,
   initMode,
   saveMode,
+  initVolume,
+  saveVolume,
   generateGameLine,
 } from "./util";
-
-// Tasks: add save all to localStorage
 
 export const startGame = createEvent();
 export const stopGame = createEvent();
 export const abortGame = createEvent();
+
+export const positionMatchPress = createEvent();
+export const audioMatchPress = createEvent();
 
 export const setSettings = createEvent();
 const resetSettings = createEvent();
@@ -31,12 +35,40 @@ const saveModeEffect = createEffect('saveMode').use(saveMode);
 
 export const resetSettingsAndMode = createEvent();
 
-const gamePromise = new Promise((resolve, reject) => {
-  abortGame.watch(reject);
-});
+export const setVolume = createEvent();
+const saveVolumeEffect = createEffect('saveVolumeEffect').use(saveVolume);
+
+export const showGameSquareElement = createEvent();
+export const resetGameSquare = createEvent();
+
+const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').use(
+  async (time) => {
+    console.log('initGameSquare');
+    await sleep(time);
+    console.log('resetGameSquare');
+    resetGameSquare();
+  },
+);
+
+// const gamePromise = new Promise((resolve, reject) => {
+//  abortGame.watch(reject);
+//  console.log(123);
+//  showGameSquareElement({ position: [1, 3] });
+// });
 
 const gameEffect = createEffect('game').use(
-  () => gamePromise.catch(() => {}),
+  async () => {
+    const promise = new Promise((resolve, reject) => {
+      abortGame.watch(reject);
+      console.log(123);
+      showGameSquareElement({ position: [1, 3] });
+      showGameSquareElement({ position: [1, 2] });
+      showGameSquareElement({ position: [3, 3] });
+      showGameSquareElement({ position: [1, 1] });
+      showGameSquareElement({ position: [1, 2] });
+      showGameSquareElement({ position: [3, 3] });
+    }).catch(() => {});
+  },
 );
 
 const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWidget);
@@ -66,8 +98,29 @@ export const $gameMode = createStore(initMode())
   })
   .reset(resetMode);
 
-const $globalSettings = createStoreObject({ settings: $settings, gameMode: $gameMode })
-  .on(startGame, (p) => { gameEffect(); });
+export const $volume = createStore(initVolume())
+  .on(setVolume, (oldVolume, newVolumeObj) => {
+    const { volume } = newVolumeObj;
+    saveVolumeEffect(volume);
+    return volume;
+  });
+
+export const $gameSquare = createStore(null)
+  .on(showGameSquareElement, (old, newState) => {
+    console.log('showGameSquareElement');
+    hideGameSquareElementEffect(700);
+    return newState;
+  })
+  .reset(resetGameSquare);
+
+const $globalSettings = createStoreObject(
+  {
+    settings: $settings,
+    gameMode: $gameMode,
+    volume: $volume,
+  },
+)
+  .on(startGame, (p) => { gameEffect(p); });
 
 export const $nextSetWidget = createStore(null)
   .on(setNextSetWidgetEffect.done, (state, { result }) => result);
@@ -76,13 +129,40 @@ export const $todaysSetsWidget = createStore(null);
 export const $todaysStatisticsWidget = createStore(null);
 
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
-$globalSettings.watch(generateGameLine);
+// $globalSettings.watch(generateGameLine);
 
-$nextSetWidget.watch(console.log);
+$gameSquare.watch(console.log);
 
-resetSettingsAndMode.watch(() => {
+resetSettingsAndMode.watch((forseUpdate) => {
   localStorage.removeItem("settings");
   localStorage.removeItem("mode");
   resetSettings();
   resetMode();
+  forseUpdate();
 });
+
+
+const keyDown = (e) => {
+  const { keyCode } = e;
+  if (keyCode === 32) { // Space
+    if (!$isGameStarted.getState()) {
+      startGame();
+    }
+  } else if (keyCode === 27) { // Esc
+    if ($isGameStarted.getState()) {
+      abortGame();
+    }
+  } else if (keyCode === 65) { // A: Position Match
+    if ($isGameStarted.getState()) {
+      positionMatchPress();
+    }
+  } else if (keyCode === 76) { // L: Audio Match
+    if ($isGameStarted.getState()) {
+      audioMatchPress();
+    }
+  } else {
+    // console.log(keyCode);
+  }
+};
+
+document.addEventListener("keydown", keyDown, false);
