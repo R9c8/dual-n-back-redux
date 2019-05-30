@@ -264,8 +264,7 @@ export const generateGameLine = ({ settings, gameMode }) => {
     });
   }
 
-  console.log(numberOfMatches, gameMode.level, numberOfTrials);
-  console.log(gameLine);
+  return gameLine;
 };
 
 // [
