@@ -54,20 +54,59 @@ const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').
 //  abortGame.watch(reject);
 //  console.log(123);
 //  showGameSquareElement({ position: [1, 3] });
-// });
+// }).catch(() => {});
 
 const gameEffect = createEffect('game').use(
-  async () => {
-    const promise = new Promise((resolve, reject) => {
-      abortGame.watch(reject);
-      console.log(123);
-      showGameSquareElement({ position: [1, 3] });
-      showGameSquareElement({ position: [1, 2] });
-      showGameSquareElement({ position: [3, 3] });
-      showGameSquareElement({ position: [1, 1] });
-      showGameSquareElement({ position: [1, 2] });
-      showGameSquareElement({ position: [3, 3] });
-    }).catch(() => {});
+  async ({ settings, gameMode, volume }) => {
+    let isGameStopped = false;
+    const stop = () => {
+      isGameStopped = true;
+      resetGameSquare();
+      console.log('game stopped');
+    };
+    const unwatchAbortGame = abortGame.watch(stop);
+
+    const gameLine = generateGameLine({ settings, gameMode });
+    const resultLine = []; // [{position: true, sound: false}]
+    let increment = 0;
+
+    let positionMatchTriggered = false;
+    let soundMatchTriggered = false;
+
+    const unwatchPositionMatchPress = positionMatchPress.watch(
+      () => { positionMatchTriggered = true; },
+    );
+    const unwatchAudioMatchPress = audioMatchPress.watch(
+      () => { soundMatchTriggered = true; },
+    );
+
+    while (!isGameStopped) {
+      const signals = gameLine.shift();
+      if (signals) {
+        console.log(signals);
+        showGameSquareElement({ position: signals.sets.position });
+        if (settings.trialTimeMode === "static") {
+          // eslint-disable-next-line no-await-in-loop
+          await sleep(Number(settings.trialTimeMs));
+        } else if (settings.trialTimeMode === "dynamic") {
+          // eslint-disable-next-line no-await-in-loop
+          await sleep(Number(settings.timeInitialMs));
+          increment += Number(settings.timeIncrementMs);
+        }
+        const resultPosition = signals.matches.position === positionMatchTriggered;
+        const resultAudio = signals.matches.sound === soundMatchTriggered;
+        positionMatchTriggered = false;
+        soundMatchTriggered = false;
+        resultLine.push({ position: resultPosition, audio: resultAudio });
+      } else {
+        stop();
+      }
+    }
+    unwatchAbortGame();
+    unwatchPositionMatchPress();
+    unwatchAudioMatchPress();
+    stopGame();
+    console.log(resultLine);
   },
 );
 
@@ -75,6 +114,7 @@ const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWi
 
 export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
+  .on(stopGame, () => false)
   .on(abortGame, () => false);
 
 export const $settings = createStore(initSettings())
