@@ -14,7 +14,7 @@ const HeaderBox = styled.header``;
 const LogoBox = styled.div`
   {
     margin: 5px auto 0;
-    width: 300px;
+    width: 335px;
     height: 80px;
   }
 `;
