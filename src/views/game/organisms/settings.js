@@ -16,9 +16,6 @@ import {
   H3, H4, Hr2, Input, CheckBox, Radio, SmallButton,
 } from "../../../ui";
 
-import { Volume } from "../molecules/volume";
-
-
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const save = async (values) => {
@@ -30,13 +27,14 @@ const save = async (values) => {
 export const Settings = () => {
   const settingsInitialValues = useStore($settings);
   const [trialTimeMode, setTrialTimeMode] = useState(settingsInitialValues.trialTimeMode);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  // console.log('rerender form');
   return (
     <Form
       onSubmit={save}
       initialValues={settingsInitialValues}
       render={({
-        handleSubmit, pristine, invalid, initial,
+        handleSubmit, pristine, invalid, initial, form,
       }) => (
         <form>
           <H3>
@@ -44,7 +42,7 @@ export const Settings = () => {
             <SmallButton
               type="button"
               onClick={() => {
-                resetSettingsAndMode(forceUpdate);
+                resetSettingsAndMode(form.reset);
               }}
             >
               Reset
