@@ -5,6 +5,8 @@ import {
   createEffect,
 } from "effector";
 
+import { Howl, Howler } from 'howler';
+
 import {
   sleep,
   setNextSetWidget,
@@ -15,14 +17,29 @@ import {
   initVolume,
   saveVolume,
   generateGameLine,
-} from "./util";
+  soundLetters,
+} from "./utils";
+
+// Sounds setup
+
+const sounds = soundLetters.reduce((acc, current) => {
+  const obj = {};
+  obj[current] = new Howl({
+    src: [`sounds/${current}.ogg`, `sounds/${current}.mp3`],
+  });
+  return Object.assign(acc, obj);
+}, {});
+
+// Events and effects
 
 export const startGame = createEvent();
 export const stopGame = createEvent();
 export const abortGame = createEvent();
 
-export const positionMatchPress = createEvent();
-export const audioMatchPress = createEvent();
+export const positionMatchKeyPress = createEvent();
+export const audioMatchKeyPress = createEvent();
+export const positionMatchButtonPress = createEvent();
+export const audioMatchButtonPress = createEvent();
 
 export const setSettings = createEvent();
 const resetSettings = createEvent();
@@ -43,18 +60,10 @@ export const resetGameSquare = createEvent();
 
 const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').use(
   async (time) => {
-    console.log('initGameSquare');
     await sleep(time);
-    console.log('resetGameSquare');
     resetGameSquare();
   },
 );
-
-// const gamePromise = new Promise((resolve, reject) => {
-//  abortGame.watch(reject);
-//  console.log(123);
-//  showGameSquareElement({ position: [1, 3] });
-// }).catch(() => {});
 
 const gameEffect = createEffect('game').use(
   async ({ settings, gameMode, volume }) => {
@@ -62,9 +71,13 @@ const gameEffect = createEffect('game').use(
     const stop = () => {
       isGameStopped = true;
       resetGameSquare();
+      stopGame();
       console.log('game stopped');
     };
-    const unwatchAbortGame = abortGame.watch(stop);
+    const unwatchAbortGame = abortGame.watch(() => {
+      stop();
+      unwatchAbortGame();
+    });
 
     const gameLine = generateGameLine({ settings, gameMode });
     const resultLine = []; // [{position: true, sound: false}]
@@ -73,24 +86,33 @@ const gameEffect = createEffect('game').use(
     let positionMatchTriggered = false;
     let soundMatchTriggered = false;
 
-    const unwatchPositionMatchPress = positionMatchPress.watch(
+    const unwatchPositionMatchKeyPress = positionMatchKeyPress.watch(
       () => { positionMatchTriggered = true; },
     );
-    const unwatchAudioMatchPress = audioMatchPress.watch(
+    const unwatchAudioMatchKeyPress = audioMatchKeyPress.watch(
       () => { soundMatchTriggered = true; },
     );
+    const unwatchPositionMatchButtonPress = positionMatchButtonPress.watch(
+      () => { positionMatchTriggered = true; },
+    );
+    const unwatchAudioMatchButtonPress = audioMatchButtonPress.watch(
+      () => { soundMatchTriggered = true; },
+    );
+
+    Howler.volume(volume / 100);
 
     while (!isGameStopped) {
       const signals = gameLine.shift();
       if (signals) {
-        console.log(signals);
         showGameSquareElement({ position: signals.sets.position });
+        sounds[signals.sets.sound].play();
+
         if (settings.trialTimeMode === "static") {
           // eslint-disable-next-line no-await-in-loop
           await sleep(Number(settings.trialTimeMs));
         } else if (settings.trialTimeMode === "dynamic") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(Number(settings.timeInitialMs));
+          await sleep(Number(settings.timeInitialMs) + increment);
           increment += Number(settings.timeIncrementMs);
         }
         const resultPosition = signals.matches.position === positionMatchTriggered;
@@ -99,13 +121,15 @@ const gameEffect = createEffect('game').use(
         soundMatchTriggered = false;
         resultLine.push({ position: resultPosition, audio: resultAudio });
       } else {
+        unwatchAbortGame();
+        unwatchPositionMatchKeyPress();
+        unwatchAudioMatchKeyPress();
+        unwatchPositionMatchButtonPress();
+        unwatchAudioMatchButtonPress();
         stop();
       }
     }
-    unwatchAbortGame();
-    unwatchPositionMatchPress();
-    unwatchAudioMatchPress();
-    stopGame();
+
     console.log(resultLine);
   },
 );
@@ -114,8 +138,7 @@ const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWi
 
 export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
-  .on(stopGame, () => false)
-  .on(abortGame, () => false);
+  .on(stopGame, () => false);
 
 export const $settings = createStore(initSettings())
   .on(setSettings, (settings, newSettings) => {
@@ -124,6 +147,8 @@ export const $settings = createStore(initSettings())
     return updatedSettings;
   })
   .reset(resetSettings);
+
+// Settings stores
 
 export const $gameMode = createStore(initMode())
   .on(setModeMatch, (mode, match) => {
@@ -145,13 +170,16 @@ export const $volume = createStore(initVolume())
     return volume;
   });
 
+// Game stores
+
 export const $gameSquare = createStore(null)
   .on(showGameSquareElement, (old, newState) => {
-    console.log('showGameSquareElement');
     hideGameSquareElementEffect(700);
     return newState;
   })
   .reset(resetGameSquare);
+
+// Combines
 
 const $globalSettings = createStoreObject(
   {
@@ -162,6 +190,8 @@ const $globalSettings = createStoreObject(
 )
   .on(startGame, (p) => { gameEffect(p); });
 
+// Widgets
+
 export const $nextSetWidget = createStore(null)
   .on(setNextSetWidgetEffect.done, (state, { result }) => result);
 
@@ -169,18 +199,17 @@ export const $todaysSetsWidget = createStore(null);
 export const $todaysStatisticsWidget = createStore(null);
 
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
-// $globalSettings.watch(generateGameLine);
 
-$gameSquare.watch(console.log);
-
-resetSettingsAndMode.watch((forseUpdate) => {
+resetSettingsAndMode.watch((updateForm) => {
   localStorage.removeItem("settings");
   localStorage.removeItem("mode");
   resetSettings();
   resetMode();
-  forseUpdate();
+  // const unwatch = $globalSettings.watch(() => { updateForm(); });
+  // unwatch();
 });
 
+// Keydown listeners
 
 const keyDown = (e) => {
   const { keyCode } = e;
@@ -194,11 +223,11 @@ const keyDown = (e) => {
     }
   } else if (keyCode === 65) { // A: Position Match
     if ($isGameStarted.getState()) {
-      positionMatchPress();
+      positionMatchKeyPress();
     }
   } else if (keyCode === 76) { // L: Audio Match
     if ($isGameStarted.getState()) {
-      audioMatchPress();
+      audioMatchKeyPress();
     }
   } else {
     // console.log(keyCode);
