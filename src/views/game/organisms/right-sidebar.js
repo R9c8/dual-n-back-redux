@@ -13,7 +13,7 @@ export const RightSidebar = () => {
   return (
     <RightSidebarBox>
       {settings && <Settings />}
-      {volume && <VolumeSet />}
+      {(volume || volume === 0) && <VolumeSet />}
     </RightSidebarBox>
   );
 };
