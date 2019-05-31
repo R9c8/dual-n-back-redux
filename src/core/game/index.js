@@ -5,6 +5,8 @@ import {
   createEffect,
 } from "effector";
 
+import { merge, clone } from "lodash";
+
 import { Howl, Howler } from 'howler';
 
 import {
@@ -17,6 +19,8 @@ import {
   initVolume,
   saveVolume,
   generateGameLine,
+  calcNumberOfTrials,
+  calcNumberOfMatches,
   soundLetters,
 } from "./utils";
 
@@ -36,10 +40,24 @@ export const startGame = createEvent();
 export const stopGame = createEvent();
 export const abortGame = createEvent();
 
-export const positionMatchKeyPress = createEvent();
-export const audioMatchKeyPress = createEvent();
+const positionMatchKeyPress = createEvent();
+const audioMatchKeyPress = createEvent();
 export const positionMatchButtonPress = createEvent();
 export const audioMatchButtonPress = createEvent();
+
+const setGameButtons = createEvent();
+const resetGameButtons = createEvent();
+
+const showKeyPressEffect = createEffect('showKeyPressEffect').use(
+  async (key) => {
+    const obj = {};
+    obj[key] = { showKeyPress: true };
+    setGameButtons(obj);
+    await sleep(100);
+    obj[key] = { showKeyPress: false };
+    setGameButtons(obj);
+  },
+);
 
 export const setSettings = createEvent();
 const resetSettings = createEvent();
@@ -71,8 +89,8 @@ const gameEffect = createEffect('game').use(
     const stop = () => {
       isGameStopped = true;
       resetGameSquare();
+      resetGameButtons();
       stopGame();
-      console.log('game stopped');
     };
     const unwatchAbortGame = abortGame.watch(() => {
       stop();
@@ -80,6 +98,18 @@ const gameEffect = createEffect('game').use(
     });
 
     const gameLine = generateGameLine({ settings, gameMode });
+    console.log(clone(gameLine));
+
+    const numberOfTrials = calcNumberOfTrials(
+      settings.trialsNumber,
+      settings.trialsFactor,
+      settings.trialsExponent,
+      gameMode.level,
+    );
+    const numberOfMatches = calcNumberOfMatches(numberOfTrials);
+    const resultErrors = { position: 0, audio: 0 }; // Last Set (total/errors): {}
+    const showErrorTimeMs = 100;
+
     const resultLine = []; // [{position: true, sound: false}]
     let increment = 0;
 
@@ -87,19 +117,41 @@ const gameEffect = createEffect('game').use(
     let soundMatchTriggered = false;
 
     const unwatchPositionMatchKeyPress = positionMatchKeyPress.watch(
-      () => { positionMatchTriggered = true; },
+      () => {
+        positionMatchTriggered = true;
+        if (settings.feedbackOnKeyPress) {
+          showKeyPressEffect("position");
+        }
+        setGameButtons({ position: { disabled: true } });
+      },
     );
     const unwatchAudioMatchKeyPress = audioMatchKeyPress.watch(
-      () => { soundMatchTriggered = true; },
+      () => {
+        soundMatchTriggered = true;
+        if (settings.feedbackOnKeyPress) {
+          showKeyPressEffect("audio");
+        }
+        setGameButtons({ audio: { disabled: true } });
+      },
     );
     const unwatchPositionMatchButtonPress = positionMatchButtonPress.watch(
-      () => { positionMatchTriggered = true; },
+      () => {
+        positionMatchTriggered = true;
+        setGameButtons({ position: { disabled: true } });
+      },
     );
     const unwatchAudioMatchButtonPress = audioMatchButtonPress.watch(
-      () => { soundMatchTriggered = true; },
+      () => {
+        soundMatchTriggered = true;
+        setGameButtons({ audio: { disabled: true } });
+      },
     );
 
     Howler.volume(volume / 100);
+
+    if (!isGameStopped) {
+      await sleep(1000);
+    }
 
     while (!isGameStopped) {
       const signals = gameLine.shift();
@@ -109,17 +161,34 @@ const gameEffect = createEffect('game').use(
 
         if (settings.trialTimeMode === "static") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(Number(settings.trialTimeMs));
+          await sleep(Number(settings.trialTimeMs - showErrorTimeMs));
         } else if (settings.trialTimeMode === "dynamic") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(Number(settings.timeInitialMs) + increment);
+          await sleep(Number(settings.timeInitialMs) + increment - showErrorTimeMs);
           increment += Number(settings.timeIncrementMs);
         }
         const resultPosition = signals.matches.position === positionMatchTriggered;
         const resultAudio = signals.matches.sound === soundMatchTriggered;
         positionMatchTriggered = false;
         soundMatchTriggered = false;
+        if (!resultPosition) {
+          // eslint-disable-next-line operator-assignment
+          resultErrors.position = resultErrors.position + 1;
+          if (settings.feedbackOnError) {
+            setGameButtons({ position: { showError: true } });
+          }
+        }
+        if (!resultAudio) {
+          // eslint-disable-next-line operator-assignment
+          resultErrors.audio = resultErrors.audio + 1;
+          if (settings.feedbackOnError) {
+            setGameButtons({ audio: { showError: true } });
+          }
+        }
         resultLine.push({ position: resultPosition, audio: resultAudio });
+        // eslint-disable-next-line no-await-in-loop
+        await sleep(showErrorTimeMs);
+        resetGameButtons();
       } else {
         unwatchAbortGame();
         unwatchPositionMatchKeyPress();
@@ -131,6 +200,8 @@ const gameEffect = createEffect('game').use(
     }
 
     console.log(resultLine);
+    console.log(`numberOfMatches: ${numberOfMatches}`);
+    console.log(resultErrors);
   },
 );
 
@@ -179,6 +250,14 @@ export const $gameSquare = createStore(null)
   })
   .reset(resetGameSquare);
 
+export const $gameButtons = createStore({
+  position: { disabled: false, showError: false, showKeyPress: false },
+  audio: { disabled: false, showError: false, showKeyPress: false },
+}).on(setGameButtons, (state, newKeys) => {
+  const updated = merge({}, state, newKeys);
+  return updated;
+}).reset(resetGameButtons);
+
 // Combines
 
 const $globalSettings = createStoreObject(
@@ -200,13 +279,11 @@ export const $todaysStatisticsWidget = createStore(null);
 
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
 
-resetSettingsAndMode.watch((updateForm) => {
+resetSettingsAndMode.watch(() => {
   localStorage.removeItem("settings");
   localStorage.removeItem("mode");
   resetSettings();
   resetMode();
-  // const unwatch = $globalSettings.watch(() => { updateForm(); });
-  // unwatch();
 });
 
 // Keydown listeners
