@@ -3,23 +3,45 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { useStore } from 'effector-react';
-import { $gameMode } from '../../../core/game';
+import {
+  $gameMode,
+  positionMatchButtonPress,
+  audioMatchButtonPress,
+} from '../../../core/game';
 
 export const GameButtons = () => {
   const gameMode = useStore($gameMode);
   return (
     <GameButtonsBox>
-      {gameMode.match.position && <GameButton keyLabel="A" label="Position Match" />}
-      {gameMode.match.audio && <GameButton keyLabel="L" label="Audio Match" />}
-      {gameMode.match.number && <GameButton keyLabel="D" label="Number Match" />}
-      {gameMode.match.color && <GameButton keyLabel="F" label="Color Match" />}
-      {gameMode.match.shape && <GameButton keyLabel="J" label="Shape Match" />}
+      {gameMode.match.position && (
+        <GameButton
+          keyLabel="A"
+          label="Position Match"
+          onClick={positionMatchButtonPress}
+        />
+      )}
+      {gameMode.match.audio && (
+        <GameButton
+          keyLabel="L"
+          label="Audio Match"
+          onClick={audioMatchButtonPress}
+        />
+      )}
+      {gameMode.match.number && (
+        <GameButton keyLabel="D" label="Number Match" />
+      )}
+      {gameMode.match.color && (
+        <GameButton keyLabel="F" label="Color Match" />
+      )}
+      {gameMode.match.shape && (
+        <GameButton keyLabel="J" label="Shape Match" />
+      )}
     </GameButtonsBox>
   );
 };
 
-const GameButton = ({ keyLabel, label }) => (
-  <GameButtonBox type="button">
+const GameButton = ({ keyLabel, label, onClick }) => (
+  <GameButtonBox type="button" onClick={onClick}>
     <KeyLabel>{ keyLabel }</KeyLabel>
     :&nbsp;
     { label }
@@ -29,6 +51,11 @@ const GameButton = ({ keyLabel, label }) => (
 GameButton.propTypes = {
   keyLabel: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+};
+
+GameButton.defaultProps = {
+  onClick: undefined,
 };
 
 const GameButtonsBox = styled.div`
