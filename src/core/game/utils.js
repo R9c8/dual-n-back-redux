@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 
-const sounds = ["c", "h", "k", "l", "q", "r", "s", "t"];
+export const soundLetters = ["c", "h", "k", "l", "q", "r", "s", "t"];
 
 const defaultSettings = {
   trialTimeMode: "static",
@@ -194,7 +194,7 @@ const generatePositionLine = (level, numberOfTrials, numberOfMatches) => {
   return array;
 };
 
-const getRandomSound = () => sounds[Math.floor(Math.random() * sounds.length)];
+const getRandomSound = () => soundLetters[Math.floor(Math.random() * soundLetters.length)];
 
 const generateSoundLine = (level, numberOfTrials, numberOfMatches) => {
   const array = [];
