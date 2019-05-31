@@ -1,27 +1,42 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import { isEqual } from "lodash";
+import { useStore } from "effector-react";
+import styled from "styled-components";
 
-export const GameTable = () => (
-  <table cellPadding="0" cellSpacing="0">
-    <tbody>
-      <tr id="row-1">
-        <Td11>{}</Td11>
-        <Td21>{}</Td21>
-        <Td31>{}</Td31>
-      </tr>
-      <tr id="row-1">
-        <Td12>{}</Td12>
-        <Td22>{}</Td22>
-        <Td32>{}</Td32>
-      </tr>
-      <tr id="row-1">
-        <Td13>{}</Td13>
-        <Td23>{}</Td23>
-        <Td33>{}</Td33>
-      </tr>
-    </tbody>
-  </table>
-);
+import { $gameSquare } from "../../../core/game";
+
+export const GameTable = () => {
+  const gameSquare = useStore($gameSquare);
+  return (
+    <table cellPadding="0" cellSpacing="0">
+      <tbody>
+        <tr id="row-1">
+          <Td11>{gameSquare && isEqual(gameSquare.position, [1, 1]) && <PositionElement />}</Td11>
+          <Td21>{gameSquare && isEqual(gameSquare.position, [1, 2]) && <PositionElement />}</Td21>
+          <Td31>{gameSquare && isEqual(gameSquare.position, [1, 3]) && <PositionElement />}</Td31>
+        </tr>
+        <tr id="row-1">
+          <Td12>{gameSquare && isEqual(gameSquare.position, [2, 1]) && <PositionElement />}</Td12>
+          <Td22>{gameSquare && isEqual(gameSquare.position, [2, 2]) && <PositionElement />}</Td22>
+          <Td32>{gameSquare && isEqual(gameSquare.position, [2, 3]) && <PositionElement />}</Td32>
+        </tr>
+        <tr id="row-1">
+          <Td13>{gameSquare && isEqual(gameSquare.position, [3, 1]) && <PositionElement />}</Td13>
+          <Td23>{gameSquare && isEqual(gameSquare.position, [3, 2]) && <PositionElement />}</Td23>
+          <Td33>{gameSquare && isEqual(gameSquare.position, [3, 3]) && <PositionElement />}</Td33>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+const PositionElement = styled.div`
+  margin: 0 auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  background-color: #00bc8c;
+`;
 
 const Td11 = styled.td`
   margin: 0;
