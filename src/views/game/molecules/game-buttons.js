@@ -1,30 +1,47 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
-import { useStore } from 'effector-react';
+import { useStore } from "effector-react";
 import {
   $gameMode,
+  $gameButtons,
   positionMatchButtonPress,
   audioMatchButtonPress,
-} from '../../../core/game';
+} from "../../../core/game";
 
 export const GameButtons = () => {
   const gameMode = useStore($gameMode);
+  const gameButtons = useStore($gameButtons);
+  // console.log(gameButtons);
   return (
     <GameButtonsBox>
       {gameMode.match.position && (
         <GameButton
           keyLabel="A"
           label="Position Match"
-          onClick={positionMatchButtonPress}
+          onClick={() => {
+            if (!gameButtons.position.disabled) {
+              positionMatchButtonPress();
+            }
+          }}
+          disabled={gameButtons.position.disabled}
+          showKeyPress={gameButtons.position.showKeyPress}
+          showError={gameButtons.position.showError}
         />
       )}
       {gameMode.match.audio && (
         <GameButton
           keyLabel="L"
           label="Audio Match"
-          onClick={audioMatchButtonPress}
+          onClick={() => {
+            if (!gameButtons.audio.disabled) {
+              audioMatchButtonPress();
+            }
+          }}
+          disabled={gameButtons.audio.disabled}
+          showKeyPress={gameButtons.audio.showKeyPress}
+          showError={gameButtons.audio.showError}
         />
       )}
       {gameMode.match.number && (
@@ -40,8 +57,21 @@ export const GameButtons = () => {
   );
 };
 
-const GameButton = ({ keyLabel, label, onClick }) => (
-  <GameButtonBox type="button" onClick={onClick}>
+const GameButton = ({
+  keyLabel,
+  label,
+  onClick,
+  disabled,
+  showKeyPress,
+  showError,
+}) => (
+  <GameButtonBox
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    showKeyPress={showKeyPress}
+    showError={showError}
+  >
     <KeyLabel>{ keyLabel }</KeyLabel>
     :&nbsp;
     { label }
@@ -52,10 +82,16 @@ GameButton.propTypes = {
   keyLabel: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   onClick: PropTypes.func,
+  disabled: PropTypes.bool,
+  showKeyPress: PropTypes.bool,
+  showError: PropTypes.bool,
 };
 
 GameButton.defaultProps = {
   onClick: undefined,
+  disabled: false,
+  showKeyPress: false,
+  showError: false,
 };
 
 const GameButtonsBox = styled.div`
@@ -104,10 +140,21 @@ const GameButtonBox = styled.button`
     outline: none !important;
     box-shadow: none !important;
   }
-
   margin-bottom: 10px;
   border-radius: 20px;
   transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out, border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out, -webkit-box-shadow 0.05s ease-in-out;
+  ${p => p.showKeyPress/* eslint-disable-line */
+    ? `color: #fff;`
+    : ``}
+
+  ${p => p.disabled/* eslint-disable-line */
+    ? `opacity: 0.65;`
+    : ``}
+
+  ${p => p.showError/* eslint-disable-line */
+    ? `border-color: #E74C3C;
+       color: #E74C3C;`
+    : ``}
 `;
 
 const KeyLabel = styled.span`
