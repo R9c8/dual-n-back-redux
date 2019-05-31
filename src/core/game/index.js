@@ -146,7 +146,7 @@ export const $settings = createStore(initSettings())
     saveSettingsEffect(updatedSettings);
     return updatedSettings;
   })
-  .reset(resetSettings);
+  .on(resetSettings, initSettings);
 
 // Settings stores
 
@@ -161,7 +161,7 @@ export const $gameMode = createStore(initMode())
     saveModeEffect(updatedMode);
     return updatedMode;
   })
-  .reset(resetMode);
+  .on(resetMode, initMode);
 
 export const $volume = createStore(initVolume())
   .on(setVolume, (oldVolume, newVolumeObj) => {
