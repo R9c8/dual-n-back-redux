@@ -19,7 +19,7 @@ import {
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const save = async (values) => {
-  console.log('Saving', values);
+  // console.log('Saving', values);
   setSettings(values);
   await sleep(500);
 };
@@ -27,8 +27,6 @@ const save = async (values) => {
 export const Settings = () => {
   const settingsInitialValues = useStore($settings);
   const [trialTimeMode, setTrialTimeMode] = useState(settingsInitialValues.trialTimeMode);
-  // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-  // console.log('rerender form');
   return (
     <Form
       onSubmit={save}
@@ -41,9 +39,7 @@ export const Settings = () => {
             Settings&nbsp;
             <SmallButton
               type="button"
-              onClick={() => {
-                resetSettingsAndMode(form.reset);
-              }}
+              onClick={resetSettingsAndMode}
             >
               Reset
             </SmallButton>
