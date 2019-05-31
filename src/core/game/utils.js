@@ -96,7 +96,7 @@ export const calcDuration = (
   return duration;
 };
 
-const calcNumberOfTrials = (
+export const calcNumberOfTrials = (
   settingsTrialsNumber,
   settingsTrialsFactor,
   settingsTrialsExponent,
@@ -153,6 +153,7 @@ const getArrayOfRandomNonRepeatingNumbers = (length, minInt, maxInt) => {
     while (array.some(el => el === num));
     array.push(num);
   }
+
   return array;
 };
 
@@ -164,7 +165,7 @@ const generatePositionLine = (level, numberOfTrials, numberOfMatches) => {
   const matchesArray = [];
   const matchesIndexes = getArrayOfRandomNonRepeatingNumbers(
     numberOfMatches,
-    level - 1,
+    level,
     numberOfTrials - 1,
   );
 
@@ -176,8 +177,8 @@ const generatePositionLine = (level, numberOfTrials, numberOfMatches) => {
   for (let i = 0; i < level; i += 1) {
     array.push({ position: getRandomPosition(), match: false });
   }
-  for (let i = level - 1; i < numberOfTrials - 1; i += 1) {
-    const prevPosition = array[i - level + 1].position;
+  for (let i = level; i < numberOfTrials; i += 1) {
+    const prevPosition = array[i - level].position;
     if (matchesArray[i] === false) {
       let rndPosition;
       do {
@@ -202,7 +203,7 @@ const generateSoundLine = (level, numberOfTrials, numberOfMatches) => {
   const matchesArray = [];
   const matchesIndexes = getArrayOfRandomNonRepeatingNumbers(
     numberOfMatches,
-    level - 1,
+    level,
     numberOfTrials - 1,
   );
 
@@ -214,8 +215,8 @@ const generateSoundLine = (level, numberOfTrials, numberOfMatches) => {
   for (let i = 0; i < level; i += 1) {
     array.push({ sound: getRandomSound(), match: false });
   }
-  for (let i = level - 1; i < numberOfTrials - 1; i += 1) {
-    const prevSound = array[i - level + 1].sound;
+  for (let i = level; i < numberOfTrials; i += 1) {
+    const prevSound = array[i - level].sound;
     if (matchesArray[i] === false) {
       let rndSound;
       do {
@@ -232,6 +233,8 @@ const generateSoundLine = (level, numberOfTrials, numberOfMatches) => {
   return array; // [{sound: "c", match: false}, ...]
 };
 
+export const calcNumberOfMatches = numberOfTrials => Math.floor(numberOfTrials / 4);
+
 export const generateGameLine = ({ settings, gameMode }) => {
   const numberOfTrials = calcNumberOfTrials(
     settings.trialsNumber,
@@ -239,7 +242,7 @@ export const generateGameLine = ({ settings, gameMode }) => {
     settings.trialsExponent,
     gameMode.level,
   );
-  const numberOfMatches = Math.floor(numberOfTrials / 4);
+  const numberOfMatches = calcNumberOfMatches(numberOfTrials);
 
   const positionLine = generatePositionLine(gameMode.level, numberOfTrials, numberOfMatches);
   const soundLine = generateSoundLine(gameMode.level, numberOfTrials, numberOfMatches);
