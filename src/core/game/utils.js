@@ -1,4 +1,4 @@
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
 export const soundLetters = ["c", "h", "k", "l", "q", "r", "s", "t"];
 
@@ -75,6 +75,46 @@ export const initVolume = () => {
 
 export const saveVolume = async (volume) => {
   localStorage.setItem('volume', volume.toString());
+};
+
+export const initResults = () => {
+  const data = localStorage.getItem('results');
+  let initialResults;
+  if (data) {
+    const results = JSON.parse(data);
+    // Filter old
+    const beginningOfTheDay = new Date();
+    beginningOfTheDay.setHours(0, 0, 0, 0);
+    results.filter(result => result.date < beginningOfTheDay);
+    initialResults = results;
+  } else {
+    initialResults = [];
+  }
+  return initialResults;
+};
+
+export const saveResults = async (results) => {
+  localStorage.setItem('results', JSON.stringify(results));
+};
+
+export const calcRate = (numberOfMatches, resultErrors) => {
+  let sumMatches = 0;
+  let sumErrors = 0;
+  if (resultErrors.position !== undefined) {
+    sumMatches += numberOfMatches;
+    sumErrors += resultErrors.position;
+  }
+  if (resultErrors.audio !== undefined) {
+    sumMatches += numberOfMatches;
+    sumErrors += resultErrors.audio;
+  }
+  let rate;
+  if (sumMatches) {
+    rate = Math.round(((sumMatches - sumErrors) / sumMatches) * 100);
+  } else {
+    rate = 0;
+  }
+  return rate;
 };
 
 // for setNextSetWidget

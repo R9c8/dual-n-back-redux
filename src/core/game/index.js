@@ -5,7 +5,8 @@ import {
   createEffect,
 } from "effector";
 
-import { merge, clone } from "lodash";
+import isEqual from "lodash/isEqual";
+import merge from "lodash/merge";
 
 import { Howl, Howler } from 'howler';
 
@@ -21,7 +22,11 @@ import {
   generateGameLine,
   calcNumberOfTrials,
   calcNumberOfMatches,
+  calcDuration,
+  calcRate,
   soundLetters,
+  initResults,
+  saveResults,
 } from "./utils";
 
 // Sounds setup
@@ -83,6 +88,9 @@ const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').
   },
 );
 
+const addResult = createEvent();
+const saveResultsEffect = createEffect('saveResultsEffect').use(saveResults);
+
 const gameEffect = createEffect('game').use(
   async ({ settings, gameMode, volume }) => {
     let isGameStopped = false;
@@ -97,8 +105,9 @@ const gameEffect = createEffect('game').use(
       unwatchAbortGame();
     });
 
+    const startDate = Date.now();
+
     const gameLine = generateGameLine({ settings, gameMode });
-    console.log(clone(gameLine));
 
     const numberOfTrials = calcNumberOfTrials(
       settings.trialsNumber,
@@ -201,11 +210,42 @@ const gameEffect = createEffect('game').use(
       }
     }
 
+    // Saving results
+
+    const duration = calcDuration(
+      settings.trialTimeMode,
+      Number(settings.trialTimeMs),
+      Number(settings.timeInitialMs),
+      Number(settings.timeIncrementMs),
+      numberOfTrials,
+    );
+
+    const rate = calcRate(numberOfMatches, resultErrors);
+    const isSuccess = rate >= Number(settings.thresholdAdvance);
+    const isFail = !isSuccess
+      ? (rate < Number(settings.thresholdFallback))
+      : false;
+
+    if (resultLine.length === numberOfTrials) {
+      addResult({
+        date: startDate,
+        level: gameMode.level,
+        duration,
+        numberOfTrials,
+        numberOfMatches,
+        resultErrors,
+        rate,
+        isSuccess,
+        isFail,
+      });
+    }
     console.log(resultLine);
     console.log(`numberOfMatches: ${numberOfMatches}`);
     console.log(resultErrors);
   },
 );
+
+addResult.watch(console.log);
 
 const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWidget);
 
@@ -259,6 +299,13 @@ export const $gameButtons = createStore({
   const updated = merge({}, state, newKeys);
   return updated;
 }).reset(resetGameButtons);
+
+export const $results = createStore(initResults())
+  .on(addResult, (results, newResult) => {
+    const updated = [...results, newResult];
+    saveResultsEffect(updated);
+    return updated;
+  });
 
 // Combines
 
