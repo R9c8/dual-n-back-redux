@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import Popover from "react-tiny-popover";
 
 import { useStore } from 'effector-react';
 import { $isGameStarted, $gameMode, setModeLevel } from '../../../core/game';
+
+import { PopoverContent } from "../../../ui";
 
 const getModeFormatted = (gameMode) => {
   const { match } = gameMode;
@@ -27,15 +31,34 @@ const getModeFormatted = (gameMode) => {
   return modeFormatted;
 };
 
+const typePopoverContent = (
+  <PopoverContent>
+    Will be available in the future
+  </PopoverContent>
+);
+
 export const GameMode = () => {
   const isGameStarted = useStore($isGameStarted);
   const gameMode = useStore($gameMode);
+  const [isTypePopoverOpen, setTypePopoverOpen] = useState(false);
   return (
     <GameModeBox>
       {!isGameStarted && (
         <>
           Type:
-          <ModeButton type="button">{getModeFormatted(gameMode)}</ModeButton>
+          <Popover
+            isOpen={isTypePopoverOpen}
+            position="left"
+            content={typePopoverContent}
+          >
+            <ModeButton
+              type="button"
+              onMouseEnter={() => setTypePopoverOpen(true)}
+              onMouseLeave={() => setTypePopoverOpen(false)}
+            >
+              {getModeFormatted(gameMode)}
+            </ModeButton>
+          </Popover>
           &nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;
           N-Back:&nbsp;
           <select
