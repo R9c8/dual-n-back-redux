@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import { useStore } from 'effector-react';
 
 import { Icon } from "antd";
+import Popover from "react-tiny-popover";
 
 import { Form, Field } from "react-final-form";
 import { OnChange } from "react-final-form-listeners";
@@ -13,7 +14,7 @@ import { $settings, setSettings, resetSettingsAndMode } from '../../../core/game
 import AutoSave from "../../../lib/auto-save";
 
 import {
-  H3, H4, Hr2, Input, CheckBox, Radio, SmallButton,
+  H3, H4, Hr2, Input, CheckBox, Radio, SmallButton, PopoverContent,
 } from "../../../ui";
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -24,9 +25,39 @@ const save = async (values) => {
   await sleep(500);
 };
 
+const numberOfTrialsPopoverContent = (
+  <PopoverContent>
+    The number of trials is calculated by the formula&nbsp;
+    <strong style={{ color: "#00bc8c" }}>Number + (N-Back-level*Factor)^Exponent</strong>
+  </PopoverContent>
+);
+
+const thresholdsPopoverContent = (
+  <PopoverContent maxWidth="300">
+    <p>
+      If you completed a set with the rate equal or higher
+      to the&nbsp;
+      <strong style={{ color: "#00bc8c" }}>Threshold Advance</strong>
+      &nbsp;value - then the&nbsp;
+      <strong style={{ color: "#00bc8c" }}>N-Back level</strong>
+      &nbsp;will be raised automatically for the next set.
+    </p>
+    <p>
+      If you completed a&nbsp;
+      <strong style={{ color: "#00bc8c" }}>Fallback count</strong>
+      &nbsp;sets with the rate lower than the&nbsp;
+      <strong style={{ color: "#00bc8c" }}>Threshold Fallback</strong>
+      &nbsp;value - then the&nbsp;
+      N-Back level will be lowered automatically for the next set.
+    </p>
+  </PopoverContent>
+);
+
 export const Settings = () => {
   const settingsInitialValues = useStore($settings);
   const [trialTimeMode, setTrialTimeMode] = useState(settingsInitialValues.trialTimeMode);
+  const [isNumberOfTrialsPopoverOpen, setNumberOfTrialsPopoverOpen] = useState(false);
+  const [isThresholdsPopoverOpen, setThresholdsPopoverOpen] = useState(false);
   return (
     <Form
       onSubmit={save}
@@ -96,7 +127,19 @@ export const Settings = () => {
           <Hr2 />
           <H4>
             Number of trials&nbsp;
-            <Icon type="question-circle" theme="filled" style={{ fontSize: '18px' }} />
+            <Popover
+              isOpen={isNumberOfTrialsPopoverOpen}
+              position="left"
+              content={numberOfTrialsPopoverContent}
+            >
+              <Icon
+                type="question-circle"
+                theme="filled"
+                style={{ fontSize: '18px' }}
+                onMouseEnter={() => setNumberOfTrialsPopoverOpen(true)}
+                onMouseLeave={() => setNumberOfTrialsPopoverOpen(false)}
+              />
+            </Popover>
           </H4>
           <div>number - factor - exponent:</div>
           <InputBox width="52px">
@@ -125,7 +168,19 @@ export const Settings = () => {
           <Hr2 />
           <H4>
             Thresholds&nbsp;
-            <Icon type="question-circle" theme="filled" style={{ fontSize: '18px' }} />
+            <Popover
+              isOpen={isThresholdsPopoverOpen}
+              position="left"
+              content={thresholdsPopoverContent}
+            >
+              <Icon
+                type="question-circle"
+                theme="filled"
+                style={{ fontSize: '18px' }}
+                onMouseEnter={() => setThresholdsPopoverOpen(true)}
+                onMouseLeave={() => setThresholdsPopoverOpen(false)}
+              />
+            </Popover>
           </H4>
           <span>Threshold advance:&nbsp;</span>
           <InputBox width="65px">
