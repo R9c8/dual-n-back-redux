@@ -119,7 +119,8 @@ const gameEffect = createEffect('game').use(
     const unwatchPositionMatchKeyPress = positionMatchKeyPress.watch(
       () => {
         positionMatchTriggered = true;
-        if (settings.feedbackOnKeyPress) {
+        // eslint-disable-next-line no-use-before-define
+        if (settings.feedbackOnKeyPress && !$gameButtons.getState().position.disabled) {
           showKeyPressEffect("position");
         }
         setGameButtons({ position: { disabled: true } });
@@ -128,7 +129,8 @@ const gameEffect = createEffect('game').use(
     const unwatchAudioMatchKeyPress = audioMatchKeyPress.watch(
       () => {
         soundMatchTriggered = true;
-        if (settings.feedbackOnKeyPress) {
+        // eslint-disable-next-line no-use-before-define
+        if (settings.feedbackOnKeyPress && !$gameButtons.getState().audio.disabled) {
           showKeyPressEffect("audio");
         }
         setGameButtons({ audio: { disabled: true } });

@@ -143,18 +143,18 @@ const GameButtonBox = styled.button`
   margin-bottom: 10px;
   border-radius: 20px;
   transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out, border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out, -webkit-box-shadow 0.05s ease-in-out;
-  ${p => p.showKeyPress/* eslint-disable-line */
-    ? `color: #fff;`
-    : ``}
 
-  ${p => p.disabled/* eslint-disable-line */
-    ? `opacity: 0.65;`
-    : ``}
+  ${p => p.disabled
+    && `opacity: 0.65;`}
 
-  ${p => p.showError/* eslint-disable-line */
-    ? `border-color: #E74C3C;
-       color: #E74C3C;`
-    : ``}
+  ${p => p.showKeyPress
+    && `color: #fff;
+        opacity: 1;`}
+
+  ${p => p.showError
+    && `border-color: #E74C3C;
+        color: #E74C3C;
+        opacity: 1;`}
 `;
 
 const KeyLabel = styled.span`
