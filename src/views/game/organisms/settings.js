@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 import styled, { css } from "styled-components";
 
 import { useStore } from 'effector-react';
