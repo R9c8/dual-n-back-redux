@@ -3,7 +3,8 @@ import styled, { css } from "styled-components";
 
 import { useStore } from 'effector-react';
 
-import { Icon } from "antd";
+import { InlineIcon } from '@iconify/react';
+import questionCircleFill from '@iconify/react/ant-design/question-circle-fill';
 import Popover from "react-tiny-popover";
 
 import { Form, Field } from "react-final-form";
@@ -132,10 +133,9 @@ export const Settings = () => {
               position="left"
               content={numberOfTrialsPopoverContent}
             >
-              <Icon
-                type="question-circle"
-                theme="filled"
-                style={{ fontSize: '18px' }}
+              <InlineIcon
+                icon={questionCircleFill}
+                width="22"
                 onMouseEnter={() => setNumberOfTrialsPopoverOpen(true)}
                 onMouseLeave={() => setNumberOfTrialsPopoverOpen(false)}
               />
@@ -173,10 +173,9 @@ export const Settings = () => {
               position="left"
               content={thresholdsPopoverContent}
             >
-              <Icon
-                type="question-circle"
-                theme="filled"
-                style={{ fontSize: '18px' }}
+              <InlineIcon
+                icon={questionCircleFill}
+                width="22"
                 onMouseEnter={() => setThresholdsPopoverOpen(true)}
                 onMouseLeave={() => setThresholdsPopoverOpen(false)}
               />
