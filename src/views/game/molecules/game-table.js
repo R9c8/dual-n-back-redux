@@ -1,5 +1,5 @@
 import React from "react";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useStore } from "effector-react";
 import styled from "styled-components";
 
