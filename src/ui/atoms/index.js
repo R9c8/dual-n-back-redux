@@ -8,3 +8,4 @@ export { Input } from "./input";
 export { CheckBox } from "./check-box";
 export { Radio } from "./radio";
 export { SmallButton } from "./small-button";
+export { PopoverContent } from "./popover-content";
