@@ -1,7 +1,7 @@
 # N-Back Training
-Classic N-Back game with React • Effector https://n-back.herokuapp.com
+N-Back game with React • Effector
 
-The N-Back game built with React, React Hooks, and Effector. Try the [live demo](https://n-back.herokuapp.com).
+A classic N-Back game built with React, React Hooks, and Effector. Try the [live demo](https://n-back-training.a4hgnr.now.sh/).
 
 ![screenshot](https://habrastorage.org/webt/ve/17/bf/ve17bfzycco7crulazxluqyc0ni.jpeg)
 
@@ -11,6 +11,9 @@ Stack
 
 - React (Create-React-App)
 - [Effector](https://github.com/zerobias/effector)
+- [Styled Components](https://github.com/styled-components/styled-components)
+- [React Router](https://github.com/ReactTraining/react-router)
+- [React Final Form](https://github.com/final-form/react-final-form)
 - Heroku
 
 
