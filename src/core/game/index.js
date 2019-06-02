@@ -5,7 +5,6 @@ import {
   createEffect,
 } from "effector";
 
-import isEqual from "lodash/isEqual";
 import merge from "lodash/merge";
 
 import { Howl, Howler } from 'howler';
