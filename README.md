@@ -1,5 +1,5 @@
 # N-Back Training
-N-Back game with React • Effector https://n-back-training.a4hgnr.now.sh/
+N-Back game with React • Effector
 
 A classic N-Back game built with React, React Hooks, and Effector. Try the [live demo](https://n-back-training.a4hgnr.now.sh/).
 
