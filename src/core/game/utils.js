@@ -85,8 +85,7 @@ export const initResults = () => {
     // Filter old
     const beginningOfTheDay = new Date();
     beginningOfTheDay.setHours(0, 0, 0, 0);
-    results.filter(result => result.date < beginningOfTheDay);
-    initialResults = results;
+    initialResults = results.filter(result => result.date > beginningOfTheDay);
   } else {
     initialResults = [];
   }
