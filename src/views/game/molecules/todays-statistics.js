@@ -1,23 +1,28 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 import { H3 } from "../../../ui";
 
-export const TodaysStatistics = () => (
-  <>
-    <H3>Today&#39;s Statistics</H3>
-    <span style={{ display: "block" }}>
-      Started:&nbsp;
-      <strong>2019-04-14 17:40:35</strong>
-    </span>
-    <span style={{ display: "block" }}>
-      Duration:&nbsp;
-      <strong>15 s.</strong>
-    </span>
-    <span style={{ display: "block" }}>
-      N-Back Avg:&nbsp;
-      <strong>3.0</strong>
-      ;&nbsp; Max:&nbsp;
-      <strong>3.0</strong>
-    </span>
-  </>
-);
+import { formatTimeFromMs } from "../../../core/game";
+
+export const TodaysStatistics = ({ gameResults }) => {
+  const startTime = new Date(gameResults[0].date);
+  const startTimeFormatted = startTime.toTimeString();
+  const totalDuration = gameResults.reduce((acc, result) => acc + result.duration, 0);
+  return (
+    <>
+      <H3>Today&#39;s Statistics</H3>
+      <div>
+        Started:&nbsp;
+        <strong>{startTimeFormatted}</strong>
+      </div>
+      <div>
+        Duration:&nbsp;
+        <strong>{formatTimeFromMs(totalDuration)}</strong>
+      </div>
+    </>
+  );
+};
+
+TodaysStatistics.propTypes = {
+  gameResults: PropTypes.arrayOf(PropTypes.object).isRequired,
+};

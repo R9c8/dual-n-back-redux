@@ -28,6 +28,8 @@ import {
   saveResults,
 } from "./utils";
 
+export { formatTimeFromMs } from "./utils";
+
 // Sounds setup
 
 const sounds = soundLetters.reduce((acc, current) => {
@@ -228,7 +230,10 @@ const gameEffect = createEffect('game').use(
     if (resultLine.length === numberOfTrials) {
       addResult({
         date: startDate,
-        level: gameMode.level,
+        mode: {
+          level: gameMode.level,
+          match: { ...gameMode.match },
+        },
         duration,
         numberOfTrials,
         numberOfMatches,
@@ -243,8 +248,6 @@ const gameEffect = createEffect('game').use(
     console.log(resultErrors);
   },
 );
-
-addResult.watch(console.log);
 
 const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWidget);
 
@@ -299,12 +302,14 @@ export const $gameButtons = createStore({
   return updated;
 }).reset(resetGameButtons);
 
-export const $results = createStore(initResults())
+export const $gameResults = createStore(initResults())
   .on(addResult, (results, newResult) => {
     const updated = [...results, newResult];
     saveResultsEffect(updated);
     return updated;
   });
+
+$gameResults.watch(console.log);
 
 // Combines
 

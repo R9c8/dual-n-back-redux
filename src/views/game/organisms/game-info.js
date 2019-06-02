@@ -1,10 +1,12 @@
 import React from "react";
 import { useStore } from "effector-react";
+import isEqual from "lodash/isEqual";
 
 import {
   $nextSetWidget,
-  $todaysSetsWidget,
-  $todaysStatisticsWidget,
+  $gameResults,
+  // $todaysSetsWidget,
+  // $todaysStatisticsWidget,
 } from "../../../core/game";
 
 import { NextSet } from "../molecules/next-set";
@@ -13,8 +15,8 @@ import { TodaysStatistics } from '../molecules/todays-statistics';
 
 export const GameInfo = () => {
   const nextSetWidget = useStore($nextSetWidget);
-  const todaysSetsWidget = useStore($todaysSetsWidget);
-  const todaysStatisticsWidget = useStore($todaysStatisticsWidget);
+  const gameResults = useStore($gameResults);
+  // const todaysStatisticsWidget = useStore($todaysStatisticsWidget);
   return (
     <>
       {nextSetWidget && (
@@ -26,8 +28,8 @@ export const GameInfo = () => {
           duration={nextSetWidget.duration}
         />
       )}
-      {todaysSetsWidget && <TodaysSets />}
-      {todaysStatisticsWidget && <TodaysStatistics />}
+      {!isEqual(gameResults, []) && <TodaysSets gameResults={gameResults} />}
+      {!isEqual(gameResults, []) && <TodaysStatistics gameResults={gameResults} />}
     </>
   );
 };

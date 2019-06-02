@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { formatTimeFromMs } from "../../../lib/time";
+import { formatTimeFromMs } from "../../../core/game";
 
 import { Hr3, H3 } from "../../../ui";
 

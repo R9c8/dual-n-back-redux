@@ -1,59 +1,68 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-export const TodaysSetsWidget = () => (
-  <TodaysSetsWidgetBox>
-    <TodaysSetsRow
-      setIsSuccess={2}
-      setNum={1}
-      setType="D2B"
-      setRate={100}
-      setTime={15}
-    />
-    <TodaysSetsRow
-      setIsSuccess={0}
-      setNum={2}
-      setType="D2B"
-      setRate={0}
-      setTime={15}
-    />
-    <TodaysSetsRow
-      setIsSuccess={1}
-      setNum={3}
-      setType="D2B"
-      setRate={50}
-      setTime={15}
-    />
-  </TodaysSetsWidgetBox>
-);
+import { formatTimeFromMs } from "../../../core/game";
+
+export const TodaysSetsWidget = ({ gameResults }) => {
+  const [widgetBox, widgetBoxSet] = useState(null);
+  useEffect(() => {
+    if (widgetBox) {
+      widgetBox.scrollTop = widgetBox.scrollHeight;
+    }
+  });
+  return (
+    <TodaysSetsWidgetBox ref={widgetBoxSet}>
+      {gameResults.map((result, index) => (
+        <TodaysSetsRow
+          key={result.date}
+          num={index + 1}
+          typeFormatted={`D${result.mode.level}B`}
+          rate={result.rate}
+          durationFormatted={formatTimeFromMs(result.duration)}
+          isSuccess={result.isSuccess}
+          isFail={result.isFail}
+        />
+      ))}
+    </TodaysSetsWidgetBox>
+  );
+};
+
+TodaysSetsWidget.propTypes = {
+  gameResults: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const TodaysSetsRow = ({
-  setIsSuccess, setNum, setType, setRate, setTime,
+  num,
+  typeFormatted,
+  rate,
+  durationFormatted,
+  isSuccess,
+  isFail,
 }) => (
-  <TodaysSetsRowBox setIsSuccess={setIsSuccess}>
+  <TodaysSetsRowBox isSuccess={isSuccess} isFail={isFail}>
     <SetNumBox>
-      {setNum}
+      {num}
       .
     </SetNumBox>
-    <SetTypeBox>{setType}</SetTypeBox>
+    <SetTypeBox>{typeFormatted}</SetTypeBox>
     <SetRateBox>
-      {setRate}
+      {rate}
       %
     </SetRateBox>
     <SetTimeBox>
-      {setTime}
-      &nbsp;s.
+      {durationFormatted}
     </SetTimeBox>
   </TodaysSetsRowBox>
 );
 
 TodaysSetsRow.propTypes = {
-  setIsSuccess: PropTypes.number.isRequired,
-  setNum: PropTypes.number.isRequired,
-  setType: PropTypes.string.isRequired,
-  setRate: PropTypes.number.isRequired,
-  setTime: PropTypes.number.isRequired,
+  num: PropTypes.number.isRequired,
+  typeFormatted: PropTypes.string.isRequired,
+  rate: PropTypes.number.isRequired,
+  durationFormatted: PropTypes.string.isRequired,
+  isSuccess: PropTypes.bool.isRequired,
+  isFail: PropTypes.bool.isRequired,
 };
 
 const TodaysSetsWidgetBox = styled.div`
@@ -67,19 +76,8 @@ const TodaysSetsWidgetBox = styled.div`
 `;
 
 const TodaysSetsRowBox = styled.div`
-  ${(props) => {
-    let s;
-    if (props.setIsSuccess === 0) {
-      s = "color: #E74C3C;";
-    }
-    if (props.setIsSuccess === 1) {
-      s = "";
-    }
-    if (props.setIsSuccess === 2) {
-      s = "color: #00bc8c;";
-    }
-    return s;
-  }}
+  ${p => p.isSuccess && `color: #00bc8c;`}
+  ${p => p.isFail && `color: #E74C3C;`}
 `;
 
 const SetNumBox = styled.span`
@@ -89,7 +87,7 @@ const SetNumBox = styled.span`
 
 const SetTypeBox = styled.span`
   display: inline-block;
-  width: 77px;
+  width: 55px;
 `;
 
 const SetRateBox = styled.span`
