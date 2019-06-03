@@ -54,6 +54,9 @@ export const audioMatchButtonPress = createEvent();
 const setGameButtons = createEvent();
 const resetGameButtons = createEvent();
 
+const addGameNotification = createEvent();
+const resetGameNotifications = createEvent();
+
 const showKeyPressEffect = createEffect('showKeyPressEffect').use(
   async (key) => {
     const obj = {};
@@ -242,10 +245,60 @@ const gameEffect = createEffect('game').use(
         isSuccess,
         isFail,
       });
+
+      if (isSuccess) {
+        setModeLevel(gameMode.level + 1);
+        resetGameNotifications();
+        addGameNotification({ title: `Set Complete`, message: `Rate: ${rate}%` });
+        addGameNotification({
+          title: `N-Back Level Increased`,
+          message: `New level is ${gameMode.level + 1}`,
+          isSuccess: true,
+        });
+      } else if (isFail) {
+        resetGameNotifications();
+        addGameNotification({ title: `Set Complete`, message: `Rate: ${rate}%` });
+        // eslint-disable-next-line no-use-before-define
+        const gameResults = $gameResults.getState();
+        const fallbackCount = Number(settings.thresholdFallbackCount);
+        if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
+          const gameResultsRev = gameResults.reverse();
+          const lastResults = gameResultsRev.slice(0, fallbackCount);
+          const needToDecrease = lastResults.reduce(
+            (acc, result) => {
+              const [flag, level] = acc;
+              let newAcc;
+              if ((flag)
+                && (level === result.mode.level)
+                && (result.isFail)) {
+                newAcc = [true, level];
+              } else {
+                newAcc = [false, level];
+              }
+              return newAcc;
+            }, [true, gameMode.level],
+          );
+          if (needToDecrease[0]) {
+            setModeLevel(gameMode.level - 1);
+            addGameNotification({
+              title: `N-Back Level Decreased`,
+              message: `New level is ${gameMode.level - 1}`,
+              isFail: true,
+            });
+          }
+        }
+      } else {
+        resetGameNotifications();
+        addGameNotification({ title: `Set Complete`, message: `Rate: ${rate}%` });
+      }
+    } else {
+      resetGameNotifications();
+      addGameNotification({ title: `Set Cancelled` });
     }
-    console.log(resultLine);
-    console.log(`numberOfMatches: ${numberOfMatches}`);
-    console.log(resultErrors);
+
+    // console.log(resultLine);
+    // console.log(`numberOfMatches: ${numberOfMatches}`);
+    // console.log(resultErrors);
   },
 );
 
@@ -309,7 +362,15 @@ export const $gameResults = createStore(initResults())
     return updated;
   });
 
-$gameResults.watch(console.log);
+export const $gameNotifications = createStore([])
+  .on(addGameNotification, (notifications, newNotification) => {
+    if (notifications.length === 3) {
+      notifications.shift();
+    }
+    const updated = [...notifications, newNotification];
+    return updated;
+  })
+  .reset(resetGameNotifications);
 
 // Combines
 
@@ -322,14 +383,6 @@ const $globalSettings = createStoreObject(
 )
   .on(startGame, (p) => { gameEffect(p); });
 
-// Widgets
-
-export const $nextSetWidget = createStore(null)
-  .on(setNextSetWidgetEffect.done, (state, { result }) => result);
-
-export const $todaysSetsWidget = createStore(null);
-export const $todaysStatisticsWidget = createStore(null);
-
 $globalSettings.watch((p) => { setNextSetWidgetEffect(p); });
 
 resetSettingsAndMode.watch(() => {
@@ -338,6 +391,11 @@ resetSettingsAndMode.watch(() => {
   resetSettings();
   resetMode();
 });
+
+// Widgets
+
+export const $nextSetWidget = createStore(null)
+  .on(setNextSetWidgetEffect.done, (state, { result }) => result);
 
 // Keydown listeners
 

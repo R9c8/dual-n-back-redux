@@ -4,9 +4,11 @@ import styled from "styled-components";
 
 import { GameTable } from "./game-table";
 import { StartButton } from "./start-button";
+import { GameNotifications } from "./game-notifications";
 
 export const GameSquare = ({ isGameStarted, startGame }) => (
   <GameSquareBox>
+    {!isGameStarted && <GameNotifications />}
     {!isGameStarted && <StartButton onClick={startGame} />}
     <GameTable />
   </GameSquareBox>

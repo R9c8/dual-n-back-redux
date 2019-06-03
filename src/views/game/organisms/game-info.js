@@ -5,8 +5,6 @@ import isEqual from "lodash/isEqual";
 import {
   $nextSetWidget,
   $gameResults,
-  // $todaysSetsWidget,
-  // $todaysStatisticsWidget,
 } from "../../../core/game";
 
 import { NextSet } from "../molecules/next-set";
@@ -16,7 +14,6 @@ import { TodaysStatistics } from '../molecules/todays-statistics';
 export const GameInfo = () => {
   const nextSetWidget = useStore($nextSetWidget);
   const gameResults = useStore($gameResults);
-  // const todaysStatisticsWidget = useStore($todaysStatisticsWidget);
   return (
     <>
       {nextSetWidget && (
