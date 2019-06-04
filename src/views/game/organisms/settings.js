@@ -27,7 +27,7 @@ const save = async (values) => {
 };
 
 const numberOfTrialsPopoverContent = (
-  <PopoverContent>
+  <PopoverContent maxWidth="300">
     The number of trials is calculated by the formula&nbsp;
     <strong style={{ color: "#00bc8c" }}>Number + (N-Back-level*Factor)^Exponent</strong>
   </PopoverContent>
