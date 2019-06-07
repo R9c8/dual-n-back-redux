@@ -42,22 +42,22 @@ const sounds = soundLetters.reduce((acc, current) => {
 
 // Events and effects
 
-export const startGame = createEvent();
-const stopGame = createEvent();
-export const abortGame = createEvent();
+export const startGame = createEvent("startGame");
+const stopGame = createEvent("stopGame");
+export const abortGame = createEvent("abortGame");
 
-const positionMatchKeyPress = createEvent();
-const audioMatchKeyPress = createEvent();
-export const positionMatchButtonPress = createEvent();
-export const audioMatchButtonPress = createEvent();
+const positionMatchKeyPress = createEvent("positionMatchKeyPress");
+const audioMatchKeyPress = createEvent("audioMatchKeyPress");
+export const positionMatchButtonPress = createEvent("positionMatchButtonPress");
+export const audioMatchButtonPress = createEvent("audioMatchButtonPress");
 
-const setGameButtons = createEvent();
-const resetGameButtons = createEvent();
+const setGameButtons = createEvent("setGameButtons");
+const resetGameButtons = createEvent("resetGameButtons");
 
-const addGameNotification = createEvent();
-const resetGameNotifications = createEvent();
+const addGameNotification = createEvent("addGameNotification");
+const resetGameNotifications = createEvent("resetGameNotifications");
 
-const showKeyPressEffect = createEffect('showKeyPressEffect').use(
+const showKeyPressEffect = createEffect("showKeyPressEffect").use(
   async (key) => {
     const obj = {};
     obj[key] = { showKeyPress: true };
@@ -68,24 +68,24 @@ const showKeyPressEffect = createEffect('showKeyPressEffect').use(
   },
 );
 
-export const setSettings = createEvent();
-const resetSettings = createEvent();
-const saveSettingsEffect = createEffect('saveSettings').use(saveSettings);
+export const setSettings = createEvent("setSettings");
+const resetSettings = createEvent("resetSettings");
+const saveSettingsEffect = createEffect("saveSettingsEffect").use(saveSettings);
 
-export const setModeMatch = createEvent();
-export const setModeLevel = createEvent();
-const resetMode = createEvent();
-const saveModeEffect = createEffect('saveMode').use(saveMode);
+export const setModeMatch = createEvent("setModeMatch");
+export const setModeLevel = createEvent("setModeLevel");
+const resetMode = createEvent("resetMode");
+const saveModeEffect = createEffect("saveModeEffect").use(saveMode);
 
-export const resetSettingsAndMode = createEvent();
+export const resetSettingsAndMode = createEvent("resetSettingsAndMode");
 
-export const setVolume = createEvent();
-const saveVolumeEffect = createEffect('saveVolumeEffect').use(saveVolume);
+export const setVolume = createEvent("setVolume");
+const saveVolumeEffect = createEffect("saveVolumeEffect").use(saveVolume);
 
-export const showGameSquareElement = createEvent();
-export const resetGameSquare = createEvent();
+export const showGameSquareElement = createEvent("showGameSquareElement");
+export const resetGameSquare = createEvent("resetGameSquare");
 
-const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').use(
+const hideGameSquareElementEffect = createEffect("hideGameSquareElementEffect").use(
   async (time) => {
     await sleep(time);
     resetGameSquare();
@@ -93,9 +93,9 @@ const hideGameSquareElementEffect = createEffect('hideGameSquareElementEffect').
 );
 
 const addResult = createEvent();
-const saveResultsEffect = createEffect('saveResultsEffect').use(saveResults);
+const saveResultsEffect = createEffect("saveResultsEffect").use(saveResults);
 
-const gameEffect = createEffect('game').use(
+const gameEffect = createEffect("gameEffect").use(
   async ({ settings, gameMode, volume }) => {
     let isGameStopped = false;
     const stop = () => {
@@ -302,7 +302,7 @@ const gameEffect = createEffect('game').use(
   },
 );
 
-const setNextSetWidgetEffect = createEffect('setNextSetWidget').use(setNextSetWidget);
+const setNextSetWidgetEffect = createEffect("setNextSetWidgetEffect").use(setNextSetWidget);
 
 export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
