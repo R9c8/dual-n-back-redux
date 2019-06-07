@@ -116,7 +116,6 @@ export const calcRate = (numberOfMatches, resultErrors) => {
   return rate;
 };
 
-// for setNextSetWidget
 export const calcDuration = (
   trialTimeMode,
   trialTimeMs,
@@ -310,13 +309,6 @@ export const generateGameLine = ({ settings, gameMode }) => {
 
   return gameLine;
 };
-
-// [
-//   {
-//     sets: { position: [1, 2], sound: "s" }
-//     matches: { position: false, sound: true },
-//   }
-// ]
 
 export const formatTimeFromMs = (timeMs) => {
   const timeMin = Math.trunc(timeMs / 60000);
