@@ -43,7 +43,7 @@ const sounds = soundLetters.reduce((acc, current) => {
 // Events and effects
 
 export const startGame = createEvent();
-export const stopGame = createEvent();
+const stopGame = createEvent();
 export const abortGame = createEvent();
 
 const positionMatchKeyPress = createEvent();
