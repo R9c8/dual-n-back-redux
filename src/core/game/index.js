@@ -176,11 +176,11 @@ const gameEffect = createEffect("gameEffect").use(
 
         if (settings.trialTimeMode === "static") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(Number(settings.trialTimeMs - showErrorTimeMs));
+          await sleep(settings.trialTimeMs - showErrorTimeMs);
         } else if (settings.trialTimeMode === "dynamic") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(Number(settings.timeInitialMs) + increment - showErrorTimeMs);
-          increment += Number(settings.timeIncrementMs);
+          await sleep(settings.timeInitialMs + increment - showErrorTimeMs);
+          increment += settings.timeIncrementMs;
         }
         const resultPosition = signals.matches.position === positionMatchTriggered;
         const resultAudio = signals.matches.sound === soundMatchTriggered;
@@ -218,16 +218,16 @@ const gameEffect = createEffect("gameEffect").use(
 
     const duration = calcDuration(
       settings.trialTimeMode,
-      Number(settings.trialTimeMs),
-      Number(settings.timeInitialMs),
-      Number(settings.timeIncrementMs),
+      settings.trialTimeMs,
+      settings.timeInitialMs,
+      settings.timeIncrementMs,
       numberOfTrials,
     );
 
     const rate = calcRate(numberOfMatches, resultErrors);
-    const isSuccess = rate >= Number(settings.thresholdAdvance);
+    const isSuccess = rate >= settings.thresholdAdvance;
     const isFail = !isSuccess
-      ? (rate < Number(settings.thresholdFallback))
+      ? (rate < settings.thresholdFallback)
       : false;
 
     if (resultLine.length === numberOfTrials) {
@@ -260,7 +260,7 @@ const gameEffect = createEffect("gameEffect").use(
         addGameNotification({ title: `Set Complete`, message: `Rate: ${rate}%` });
         // eslint-disable-next-line no-use-before-define
         const gameResults = $gameResults.getState();
-        const fallbackCount = Number(settings.thresholdFallbackCount);
+        const fallbackCount = settings.thresholdFallbackCount;
         if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
           const gameResultsRev = gameResults.reverse();
           const lastResults = gameResultsRev.slice(0, fallbackCount);
@@ -308,13 +308,30 @@ export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
   .on(stopGame, () => false);
 
-export const $settings = createStore(initSettings())
+export const $settingsForm = createStore(initSettings())
   .on(setSettings, (settings, newSettings) => {
     const updatedSettings = { ...settings, ...newSettings };
     saveSettingsEffect(updatedSettings);
     return updatedSettings;
   })
   .on(resetSettings, initSettings);
+
+const $settings = $settingsForm.map(settingsForm => ({
+  trialTimeMode: settingsForm.trialTimeMode,
+  trialTimeMs: Number(settingsForm.trialTimeMs),
+  timeInitialMs: Number(settingsForm.timeInitialMs),
+  timeIncrementMs: Number(settingsForm.timeIncrementMs),
+  trialsNumber: Number(settingsForm.trialsNumber),
+  trialsFactor: Number(settingsForm.trialsFactor),
+  trialsExponent: Number(settingsForm.trialsExponent),
+  thresholdAdvance: Number(settingsForm.thresholdAdvance),
+  thresholdFallback: Number(settingsForm.thresholdFallback),
+  thresholdFallbackCount: Number(settingsForm.thresholdFallbackCount),
+  feedbackOnError: true,
+  feedbackOnKeyPress: true,
+}));
+
+$settings.watch(console.log);
 
 // Settings stores
 

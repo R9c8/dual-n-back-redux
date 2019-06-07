@@ -140,8 +140,8 @@ export const calcNumberOfTrials = (
   settingsTrialsFactor,
   settingsTrialsExponent,
   gameModeLevel,
-) => Number(settingsTrialsNumber)
-  + ((gameModeLevel * Number(settingsTrialsFactor)) ** Number(settingsTrialsExponent));
+) => settingsTrialsNumber
+  + ((gameModeLevel * settingsTrialsFactor) ** settingsTrialsExponent);
 
 export const setNextSetWidget = async ({ settings, gameMode }) => {
   const numberOfTrials = calcNumberOfTrials(
@@ -150,10 +150,12 @@ export const setNextSetWidget = async ({ settings, gameMode }) => {
     settings.trialsExponent,
     gameMode.level,
   );
-  const { trialTimeMode } = settings;
-  const trialTimeMs = Number(settings.trialTimeMs);
-  const timeInitialMs = Number(settings.timeInitialMs);
-  const timeIncrementMs = Number(settings.timeIncrementMs);
+  const {
+    trialTimeMode,
+    trialTimeMs,
+    timeInitialMs,
+    timeIncrementMs,
+  } = settings;
 
   const trialTime = (trialTimeMode === "static") ? trialTimeMs : timeInitialMs;
   const trialTimeIncrement = (trialTimeMode === "static") ? 0 : timeIncrementMs;

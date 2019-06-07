@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 import { useStore } from "effector-react";
-import { $settings, $volume } from "../../../core/game/index";
+import { $settingsForm, $volume } from "../../../core/game/index";
 
 import { Settings } from "./settings";
 import { VolumeSet } from "./volume-set";
 
 export const RightSidebar = () => {
-  const settings = useStore($settings);
+  const settings = useStore($settingsForm);
   const volume = useStore($volume);
   return (
     <RightSidebarBox>

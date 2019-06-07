@@ -10,7 +10,7 @@ import Popover from "react-tiny-popover";
 import { Form, Field } from "react-final-form";
 import { OnChange } from "react-final-form-listeners";
 
-import { $settings, setSettings, resetSettingsAndMode } from '../../../core/game/index';
+import { $settingsForm, setSettings, resetSettingsAndMode } from '../../../core/game/index';
 
 import AutoSave from "../../../lib/auto-save";
 
@@ -55,7 +55,7 @@ const thresholdsPopoverContent = (
 );
 
 export const Settings = () => {
-  const settingsInitialValues = useStore($settings);
+  const settingsInitialValues = useStore($settingsForm);
   const [trialTimeMode, setTrialTimeMode] = useState(settingsInitialValues.trialTimeMode);
   const [isNumberOfTrialsPopoverOpen, setNumberOfTrialsPopoverOpen] = useState(false);
   const [isThresholdsPopoverOpen, setThresholdsPopoverOpen] = useState(false);
