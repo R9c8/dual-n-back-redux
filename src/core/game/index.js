@@ -264,7 +264,7 @@ const gameEffect = createEffect('game').use(
         if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
           const gameResultsRev = gameResults.reverse();
           const lastResults = gameResultsRev.slice(0, fallbackCount);
-          const needToDecrease = lastResults.reduce(
+          const [needToDecrease, _levelIgnored] = lastResults.reduce(
             (acc, result) => {
               const [flag, level] = acc;
               let newAcc;
@@ -278,7 +278,7 @@ const gameEffect = createEffect('game').use(
               return newAcc;
             }, [true, gameMode.level],
           );
-          if (needToDecrease[0]) {
+          if (needToDecrease) {
             setModeLevel(gameMode.level - 1);
             addGameNotification({
               title: `N-Back Level Decreased`,
