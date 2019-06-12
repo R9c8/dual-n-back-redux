@@ -36,6 +36,7 @@ const sounds = soundLetters.reduce((acc, current) => {
   const obj = {};
   obj[current] = new Howl({
     src: [`sounds/${current}.ogg`, `sounds/${current}.mp3`],
+    html5: true,
   });
   return Object.assign(acc, obj);
 }, {});
