@@ -47,6 +47,7 @@
     "rc-slider": "^8.6.11",
     "react": "^16.8.6",
     "react-app-polyfill": "^0.2.2",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dev-utils": "^8.0.0",
     "react-dom": "^16.8.6",
     "react-final-form": "^5.1.0",

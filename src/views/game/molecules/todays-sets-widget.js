@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import { formatTimeFromMs } from "../../../core/game";
 
 export const TodaysSetsWidget = ({ gameResults }) => {
-  const [widgetBox, widgetBoxSet] = useState(null);
+  const [scrollbar, scrollbarSet] = useState(null);
   useEffect(() => {
-    if (widgetBox) {
-      widgetBox.scrollTop = widgetBox.scrollHeight;
+    if (scrollbar) {
+      scrollbar.scrollToBottom();
     }
   });
   return (
-    <TodaysSetsWidgetBox ref={widgetBoxSet}>
-      {gameResults.map((result, index) => (
-        <TodaysSetsRow
-          key={result.date}
-          num={index + 1}
-          typeFormatted={`D${result.mode.level}B`}
-          rate={result.rate}
-          durationFormatted={formatTimeFromMs(result.duration)}
-          isSuccess={result.isSuccess}
-          isFail={result.isFail}
-        />
-      ))}
+    <TodaysSetsWidgetBox>
+      <Scrollbars ref={scrollbarSet}>
+        {gameResults.map((result, index) => (
+          <TodaysSetsRow
+            key={result.date}
+            num={index + 1}
+            typeFormatted={`D${result.mode.level}B`}
+            rate={result.rate}
+            durationFormatted={formatTimeFromMs(result.duration)}
+            isSuccess={result.isSuccess}
+            isFail={result.isFail}
+          />
+        ))}
+      </Scrollbars>
     </TodaysSetsWidgetBox>
   );
 };
@@ -71,7 +74,7 @@ const TodaysSetsWidgetBox = styled.div`
   padding: 6px 4px 4px 8px;
   border-radius: 10px;
   height: 110px;
-  overflow-y: scroll;
+  // overflow-y: scroll;
   font-size: 0.8em;
 `;
 
