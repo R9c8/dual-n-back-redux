@@ -110,6 +110,9 @@ export const calcRate = (numberOfMatches, resultErrors) => {
   let rate;
   if (sumMatches) {
     rate = Math.round(((sumMatches - sumErrors) / sumMatches) * 100);
+    if (rate < 0) {
+      rate = 0;
+    }
   } else {
     rate = 0;
   }
