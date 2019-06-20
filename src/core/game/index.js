@@ -281,6 +281,7 @@ const gameEffect = createEffect().use(
         if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
           const gameResultsRev = gameResults.reverse();
           const lastResults = gameResultsRev.slice(0, fallbackCount);
+          // eslint-disable-next-line no-unused-vars
           const [needToDecrease, _levelIgnored] = lastResults.reduce(
             (acc, result) => {
               const [flag, level] = acc;
@@ -347,8 +348,6 @@ const $settings = $settingsForm.map(settingsForm => ({
   feedbackOnError: true,
   feedbackOnKeyPress: true,
 }));
-
-$settings.watch(console.log);
 
 // Settings stores
 
