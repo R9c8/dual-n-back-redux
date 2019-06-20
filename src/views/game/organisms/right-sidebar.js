@@ -22,7 +22,7 @@ const RightSidebarBox = styled.aside`
   position: absolute;
   top: 0;
   left: 710px;
-  width: 210px;
+  width: 212px;
   height: 650px;
   background-color: #363636;
   padding-top: 25px;
