@@ -120,6 +120,7 @@ const gameEffect = createEffect().use(
       settings.trialsExponent,
       gameMode.level,
     );
+
     const numberOfMatches = calcNumberOfMatches(numberOfTrials);
     const resultErrors = { position: 0, audio: 0 }; // Last Set (total/errors): {}
     const showErrorTimeMs = 100;
@@ -140,6 +141,7 @@ const gameEffect = createEffect().use(
         setGameButtons({ position: { disabled: true } });
       },
     );
+
     const unwatchAudioMatchKeyPress = audioMatchKeyPress.watch(
       () => {
         soundMatchTriggered = true;
@@ -150,12 +152,14 @@ const gameEffect = createEffect().use(
         setGameButtons({ audio: { disabled: true } });
       },
     );
+
     const unwatchPositionMatchButtonPress = positionMatchButtonPress.watch(
       () => {
         positionMatchTriggered = true;
         setGameButtons({ position: { disabled: true } });
       },
     );
+
     const unwatchAudioMatchButtonPress = audioMatchButtonPress.watch(
       () => {
         soundMatchTriggered = true;
@@ -188,9 +192,11 @@ const gameEffect = createEffect().use(
 
     while (!isGameStopped) {
       const signals = gameLine.shift();
+
       if (signals) {
         showGameSquareElement({ position: signals.sets.position });
         sounds[signals.sets.sound].play();
+
         if (settings.trialTimeMode === "static") {
           // eslint-disable-next-line no-await-in-loop
           await gameSleep(settings.trialTimeMs - showErrorTimeMs);
@@ -199,10 +205,12 @@ const gameEffect = createEffect().use(
           await gameSleep(settings.timeInitialMs + increment - showErrorTimeMs);
           increment += settings.timeIncrementMs;
         }
+
         const resultPosition = signals.matches.position === positionMatchTriggered;
         const resultAudio = signals.matches.sound === soundMatchTriggered;
         positionMatchTriggered = false;
         soundMatchTriggered = false;
+
         if (!resultPosition) {
           // eslint-disable-next-line operator-assignment
           resultErrors.position = resultErrors.position + 1;
@@ -210,6 +218,7 @@ const gameEffect = createEffect().use(
             setGameButtons({ position: { showError: true } });
           }
         }
+
         if (!resultAudio) {
           // eslint-disable-next-line operator-assignment
           resultErrors.audio = resultErrors.audio + 1;
@@ -217,6 +226,7 @@ const gameEffect = createEffect().use(
             setGameButtons({ audio: { showError: true } });
           }
         }
+
         resultLine.push({ position: resultPosition, audio: resultAudio });
         // eslint-disable-next-line no-await-in-loop
         await gameSleep(showErrorTimeMs);
@@ -278,6 +288,7 @@ const gameEffect = createEffect().use(
         // eslint-disable-next-line no-use-before-define
         const gameResults = $gameResults.getState();
         const fallbackCount = settings.thresholdFallbackCount;
+
         if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
           const gameResultsRev = gameResults.reverse();
           const lastResults = gameResultsRev.slice(0, fallbackCount);
@@ -286,6 +297,7 @@ const gameEffect = createEffect().use(
             (acc, result) => {
               const [flag, level] = acc;
               let newAcc;
+
               if ((flag)
                 && (level === result.mode.level)
                 && (result.isFail)) {
@@ -293,9 +305,11 @@ const gameEffect = createEffect().use(
               } else {
                 newAcc = [false, level];
               }
+
               return newAcc;
             }, [true, gameMode.level],
           );
+
           if (needToDecrease) {
             setModeLevel(gameMode.level - 1);
             addGameNotification({
@@ -313,10 +327,6 @@ const gameEffect = createEffect().use(
       resetGameNotifications();
       addGameNotification({ title: `Set Cancelled` });
     }
-
-    // console.log(resultLine);
-    // console.log(`numberOfMatches: ${numberOfMatches}`);
-    // console.log(resultErrors);
   },
 );
 
@@ -355,11 +365,13 @@ export const $gameMode = createStore(initMode())
   .on(setModeMatch, (mode, match) => {
     const updatedMode = { ...mode, match };
     saveModeEffect(updatedMode);
+
     return updatedMode;
   })
   .on(setModeLevel, (mode, level) => {
     const updatedMode = { ...mode, level };
     saveModeEffect(updatedMode);
+
     return updatedMode;
   })
   .on(resetMode, initMode);
@@ -368,6 +380,7 @@ export const $volume = createStore(initVolume())
   .on(setVolume, (oldVolume, newVolumeObj) => {
     const { volume } = newVolumeObj;
     saveVolumeEffect(volume);
+
     return volume;
   });
 
@@ -376,6 +389,7 @@ export const $volume = createStore(initVolume())
 export const $gameSquare = createStore(null)
   .on(showGameSquareElement, (old, newState) => {
     hideGameSquareElementEffect(700);
+
     return newState;
   })
   .reset(resetGameSquare);
@@ -385,6 +399,7 @@ export const $gameButtons = createStore({
   audio: { disabled: false, showError: false, showKeyPress: false },
 }).on(setGameButtons, (state, newKeys) => {
   const updated = merge({}, state, newKeys);
+
   return updated;
 }).reset(resetGameButtons);
 
@@ -392,6 +407,7 @@ export const $gameResults = createStore(initResults())
   .on(addResult, (results, newResult) => {
     const updated = [...results, newResult];
     saveResultsEffect(updated);
+
     return updated;
   });
 
@@ -400,7 +416,9 @@ export const $gameNotifications = createStore([])
     if (notifications.length === 3) {
       notifications.shift();
     }
+
     const updated = [...notifications, newNotification];
+
     return updated;
   })
   .reset(resetGameNotifications);
@@ -434,6 +452,7 @@ export const $nextSetWidget = createStore(null)
 
 const keyDown = (e) => {
   const { keyCode } = e;
+
   if (keyCode === 32) { // Space
     if (!$isGameStarted.getState()) {
       startGame();

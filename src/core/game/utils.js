@@ -35,11 +35,13 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export const initSettings = () => {
   const data = localStorage.getItem('settings');
   let initialSettings;
+
   if (data) {
     initialSettings = JSON.parse(data);
   } else {
     initialSettings = defaultSettings;
   }
+
   return initialSettings;
 };
 
@@ -50,11 +52,13 @@ export const saveSettings = async (settings) => {
 export const initMode = () => {
   const data = localStorage.getItem('mode');
   let initialMode;
+
   if (data) {
     initialMode = JSON.parse(data);
   } else {
     initialMode = defaultMode;
   }
+
   return initialMode;
 };
 
@@ -65,11 +69,13 @@ export const saveMode = async (mode) => {
 export const initVolume = () => {
   const data = localStorage.getItem('volume');
   let initialVolume;
+
   if (data) {
     initialVolume = Number(data);
   } else {
     initialVolume = defaultVolume;
   }
+
   return initialVolume;
 };
 
@@ -80,6 +86,7 @@ export const saveVolume = async (volume) => {
 export const initResults = () => {
   const data = localStorage.getItem('results');
   let initialResults;
+
   if (data) {
     const results = JSON.parse(data);
     // Filter old
@@ -89,6 +96,7 @@ export const initResults = () => {
   } else {
     initialResults = [];
   }
+
   return initialResults;
 };
 
@@ -99,15 +107,19 @@ export const saveResults = async (results) => {
 export const calcRate = (numberOfMatches, resultErrors) => {
   let sumMatches = 0;
   let sumErrors = 0;
+
   if (resultErrors.position !== undefined) {
     sumMatches += numberOfMatches;
     sumErrors += resultErrors.position;
   }
+
   if (resultErrors.audio !== undefined) {
     sumMatches += numberOfMatches;
     sumErrors += resultErrors.audio;
   }
+
   let rate;
+
   if (sumMatches) {
     rate = Math.round(((sumMatches - sumErrors) / sumMatches) * 100);
     if (rate < 0) {
@@ -116,6 +128,7 @@ export const calcRate = (numberOfMatches, resultErrors) => {
   } else {
     rate = 0;
   }
+
   return rate;
 };
 
@@ -127,6 +140,7 @@ export const calcDuration = (
   numberOfTrials,
 ) => {
   let duration = 0;
+
   if (trialTimeMode === "static") {
     duration = numberOfTrials * trialTimeMs;
   } else if (trialTimeMode === "dynamic") {
@@ -134,6 +148,7 @@ export const calcDuration = (
       duration += timeInitialMs + timeIncrementMs * i;
     }
   }
+
   return duration;
 };
 
@@ -220,10 +235,12 @@ const generatePositionLine = (level, numberOfTrials, numberOfMatches) => {
   for (let i = 0; i < level; i += 1) {
     array.push({ position: getRandomPosition(), match: false });
   }
+
   for (let i = level; i < numberOfTrials; i += 1) {
     const prevPosition = array[i - level].position;
     if (matchesArray[i] === false) {
       let rndPosition;
+
       do {
         rndPosition = getRandomPosition();
       }
@@ -258,10 +275,12 @@ const generateSoundLine = (level, numberOfTrials, numberOfMatches) => {
   for (let i = 0; i < level; i += 1) {
     array.push({ sound: getRandomSound(), match: false });
   }
+
   for (let i = level; i < numberOfTrials; i += 1) {
     const prevSound = array[i - level].sound;
     if (matchesArray[i] === false) {
       let rndSound;
+
       do {
         rndSound = getRandomSound();
       }
@@ -318,14 +337,18 @@ export const formatTimeFromMs = (timeMs) => {
   const timeSec = Math.trunc((timeMs - timeMin * 60000) / 1000);
   const timeMsec = timeMs - timeMin * 60000 - timeSec * 1000;
   let timeFormated = "";
+
   if (timeMin !== 0) {
     timeFormated += `${timeMin && `${timeMin} m. `}`;
   }
+
   if (timeSec !== 0) {
     timeFormated += `${timeSec && `${timeSec} s. `}`;
   }
+
   if (timeMsec !== 0) {
     timeFormated += `${timeMsec && `${timeMsec} ms. `}`;
   }
+
   return timeFormated;
 };
