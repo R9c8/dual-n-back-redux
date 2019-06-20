@@ -165,8 +165,25 @@ const gameEffect = createEffect().use(
 
     Howler.volume(volume / 100);
 
+    const gameSleep = ms => new Promise(
+      (resolve) => {
+        if (!isGameStopped) {
+          const unwatchAbortGame2 = abortGame.watch(() => {
+            resolve();
+            unwatchAbortGame();
+          });
+          setTimeout(() => {
+            unwatchAbortGame2();
+            resolve();
+          }, ms);
+        } else {
+          resolve();
+        }
+      },
+    );
+
     if (!isGameStopped) {
-      await sleep(1000);
+      await gameSleep(1000);
     }
 
     while (!isGameStopped) {
@@ -174,13 +191,12 @@ const gameEffect = createEffect().use(
       if (signals) {
         showGameSquareElement({ position: signals.sets.position });
         sounds[signals.sets.sound].play();
-
         if (settings.trialTimeMode === "static") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(settings.trialTimeMs - showErrorTimeMs);
+          await gameSleep(settings.trialTimeMs - showErrorTimeMs);
         } else if (settings.trialTimeMode === "dynamic") {
           // eslint-disable-next-line no-await-in-loop
-          await sleep(settings.timeInitialMs + increment - showErrorTimeMs);
+          await gameSleep(settings.timeInitialMs + increment - showErrorTimeMs);
           increment += settings.timeIncrementMs;
         }
         const resultPosition = signals.matches.position === positionMatchTriggered;
@@ -203,7 +219,7 @@ const gameEffect = createEffect().use(
         }
         resultLine.push({ position: resultPosition, audio: resultAudio });
         // eslint-disable-next-line no-await-in-loop
-        await sleep(showErrorTimeMs);
+        await gameSleep(showErrorTimeMs);
         resetGameButtons();
       } else {
         unwatchAbortGame();
