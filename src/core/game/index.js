@@ -43,6 +43,9 @@ const sounds = soundLetters.reduce((acc, current) => {
 
 // Events and effects
 
+export const gameInitRoute = createEvent();
+export const gameTerminateRoute = createEvent();
+
 export const startGame = createEvent();
 const stopGame = createEvent();
 export const abortGame = createEvent();
@@ -496,4 +499,7 @@ const keyDown = (e) => {
   }
 };
 
-document.addEventListener("keydown", keyDown, false);
+
+gameInitRoute.watch(() => document.addEventListener("keydown", keyDown, false));
+
+gameTerminateRoute.watch(() => document.removeEventListener("keydown", keyDown, false));
