@@ -46,6 +46,8 @@ const sounds = soundLetters.reduce((acc, current) => {
 export const startGame = createEvent();
 const stopGame = createEvent();
 export const abortGame = createEvent();
+const startGameKeyPress = createEvent();
+const abortGameKeyPress = createEvent();
 
 const positionMatchKeyPress = createEvent();
 const audioMatchKeyPress = createEvent();
@@ -58,6 +60,7 @@ const resetGameButtons = createEvent();
 const addGameNotification = createEvent();
 const resetGameNotifications = createEvent();
 
+const showKeyPress = createEvent();
 const showKeyPressEffect = createEffect().use(
   async (key) => {
     const obj = {};
@@ -97,7 +100,12 @@ const addResult = createEvent();
 const saveResultsEffect = createEffect().use(saveResults);
 
 const gameEffect = createEffect().use(
-  async ({ settings, gameMode, volume }) => {
+  async ({
+    settings,
+    gameMode,
+    volume,
+    gameResults,
+  }) => {
     let isGameStopped = false;
     const stop = () => {
       isGameStopped = true;
@@ -135,8 +143,8 @@ const gameEffect = createEffect().use(
       () => {
         positionMatchTriggered = true;
         // eslint-disable-next-line no-use-before-define
-        if (settings.feedbackOnKeyPress && !$gameButtons.getState().position.disabled) {
-          showKeyPressEffect("position");
+        if (settings.feedbackOnKeyPress) {
+          showKeyPress("position");
         }
         setGameButtons({ position: { disabled: true } });
       },
@@ -146,8 +154,8 @@ const gameEffect = createEffect().use(
       () => {
         soundMatchTriggered = true;
         // eslint-disable-next-line no-use-before-define
-        if (settings.feedbackOnKeyPress && !$gameButtons.getState().audio.disabled) {
-          showKeyPressEffect("audio");
+        if (settings.feedbackOnKeyPress) {
+          showKeyPress("audio");
         }
         setGameButtons({ audio: { disabled: true } });
       },
@@ -232,14 +240,15 @@ const gameEffect = createEffect().use(
         await gameSleep(showErrorTimeMs);
         resetGameButtons();
       } else {
-        unwatchAbortGame();
-        unwatchPositionMatchKeyPress();
-        unwatchAudioMatchKeyPress();
-        unwatchPositionMatchButtonPress();
-        unwatchAudioMatchButtonPress();
         stop();
       }
     }
+
+    unwatchAbortGame();
+    unwatchPositionMatchKeyPress();
+    unwatchAudioMatchKeyPress();
+    unwatchPositionMatchButtonPress();
+    unwatchAudioMatchButtonPress();
 
     // Saving results
 
@@ -285,8 +294,6 @@ const gameEffect = createEffect().use(
       } else if (isFail) {
         resetGameNotifications();
         addGameNotification({ title: `Set Complete`, message: `Rate: ${rate}%` });
-        // eslint-disable-next-line no-use-before-define
-        const gameResults = $gameResults.getState();
         const fallbackCount = settings.thresholdFallbackCount;
 
         if ((gameResults.length >= fallbackCount) && gameMode.level !== 1) {
@@ -334,7 +341,21 @@ const setNextSetWidgetEffect = createEffect().use(setNextSetWidget);
 
 export const $isGameStarted = createStore(false)
   .on(startGame, () => true)
-  .on(stopGame, () => false);
+  .on(stopGame, () => false)
+  .on(startGameKeyPress, (state) => {
+    if (!state) {
+      startGame();
+    }
+
+    return true;
+  })
+  .on(abortGameKeyPress, (state) => {
+    if (state) {
+      abortGame();
+    }
+
+    return false;
+  });
 
 export const $settingsForm = createStore(initSettings())
   .on(setSettings, (settings, newSettings) => {
@@ -397,11 +418,19 @@ export const $gameSquare = createStore(null)
 export const $gameButtons = createStore({
   position: { disabled: false, showError: false, showKeyPress: false },
   audio: { disabled: false, showError: false, showKeyPress: false },
-}).on(setGameButtons, (state, newKeys) => {
-  const updated = merge({}, state, newKeys);
+})
+  .on(setGameButtons, (state, newKeys) => {
+    const updated = merge({}, state, newKeys);
 
-  return updated;
-}).reset(resetGameButtons);
+    return updated;
+  })
+  .reset(resetGameButtons);
+
+$gameButtons.watch(showKeyPress, (state, key) => {
+  if (!state[key].disabled) {
+    showKeyPressEffect(key);
+  }
+});
 
 export const $gameResults = createStore(initResults())
   .on(addResult, (results, newResult) => {
@@ -430,6 +459,7 @@ const $globalSettings = createStoreObject(
     settings: $settings,
     gameMode: $gameMode,
     volume: $volume,
+    gameResults: $gameResults,
   },
 )
   .on(startGame, (p) => { gameEffect(p); });
@@ -454,21 +484,13 @@ const keyDown = (e) => {
   const { keyCode } = e;
 
   if (keyCode === 32) { // Space
-    if (!$isGameStarted.getState()) {
-      startGame();
-    }
+    startGameKeyPress();
   } else if (keyCode === 27) { // Esc
-    if ($isGameStarted.getState()) {
-      abortGame();
-    }
+    abortGameKeyPress();
   } else if (keyCode === 65) { // A: Position Match
-    if ($isGameStarted.getState()) {
-      positionMatchKeyPress();
-    }
+    positionMatchKeyPress();
   } else if (keyCode === 76) { // L: Audio Match
-    if ($isGameStarted.getState()) {
-      audioMatchKeyPress();
-    }
+    audioMatchKeyPress();
   } else {
     // console.log(keyCode);
   }
